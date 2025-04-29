@@ -1,101 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>3D Node-Link Graph</title>
+  <title>Network Graph with Plotly</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 </head>
 <body>
-  <h1>Graph in Pyodide</h1>
-  <div id="plot" style="width: 100%; height: 700px;"></div>
-  <pre id="output">Loading...</pre>
+  <h2>Simple Node-Link Graph (JavaScript + Plotly)</h2>
+  <div id="network-plot" style="width: 100%; height: 600px;"></div>
 
   <script>
-    async function main() {
-      const pyodide = await loadPyodide();
-      await pyodide.loadPackage(["numpy", "micropip"]);
+    // Example edge list (undirected graph)
+    const edges = [
+      [0, 1], [1, 2], [2, 3], [3, 0], // square
+      [1, 4], [4, 5], [5, 2]          // extra tail
+    ];
 
-      await pyodide.runPythonAsync(`
-import micropip
-await micropip.install(["plotly", "networkx"])
-      `);
-
-      await pyodide.runPythonAsync(`
-import numpy as np
-import networkx as nx
-import plotly.graph_objects as go
-import js
-
-# Create a graph (you can replace this with your CSV-based graph if needed)
-G = nx.random_geometric_graph(200, 0.125)
-
-pos = nx.spring_layout(G, seed=42)
-# Edge traces (lines connecting the nodes)
-edge_x = []
-edge_y = []
-for edge in G.edges():
-    x0, y0 = pos[edge[0]]
-    x1, y1 = pos[edge[1]]
-    edge_x += [x0, x1, None]
-    edge_y += [y0, y1, None]
-
-edge_trace = go.Scatter(
-    x=edge_x, y=edge_y,
-    line=dict(width=0.5, color='#888'),
-    hoverinfo='none',
-    mode='lines')
-
-node_x = []
-node_y = []
-for node in G.nodes():
-    x, y = pos[node]
-    node_x.append(x)
-    node_y.append(y)
-
-node_trace = go.Scatter(
-    x=node_x, y=node_y,
-    mode='markers',
-    hoverinfo='text',
-    marker=dict(
-        showscale=True,
-        # colorscale options
-        #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-        #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-        #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-        colorscale='YlGnBu',
-        reversescale=True,
-        color=[],
-        size=10,
-        colorbar=dict(
-            thickness=15,
-            title=dict(
-              text='Node Connections',
-              side='right'
-            ),
-            xanchor='left',
-        ),
-        line_width=2))
-
-# Create the figure
-fig = go.Figure(data=[edge_trace, node_trace],
-             layout=go.Layout(
-                title=dict(
-                    text="<br>Network graph made with Python",
-                    font=dict(
-                        size=16
-                    )
-                ),
-                showlegend=False,
-                hovermode='closest',
-                margin=dict(b=20,l=5,r=5,t=40),
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                )
-fig.show()
-      `);
+    // Auto-generate node positions (can be layouted by hand or imported)
+    const numNodes = 6;
+    const angleStep = 2 * Math.PI / numNodes;
+    const positions = [];
+    for (let i = 0; i < numNodes; i++) {
+      const angle = i * angleStep;
+      positions.push([Math.cos(angle), Math.sin(angle)]);
     }
 
-    main();
+    // Prepare edge lines
+    const edgeX = [];
+    const edgeY = [];
+    edges.forEach(([src, dst]) => {
+      const [x0, y0] = positions[src];
+      const [x1, y1] = positions[dst];
+      edgeX.push(x0, x1, null);
+      edgeY.push(y0, y1, null);
+    });
+
+    const edgeTrace = {
+      x: edgeX,
+      y: edgeY,
+      mode: 'lines',
+      line: { width: 1, color: '#888' },
+      hoverinfo: 'none',
+      type: 'scatter'
+    };
+
+    // Prepare node markers
+    const nodeX = positions.map(p => p[0]);
+    const nodeY = positions.map(p => p[1]);
+
+    const nodeTrace = {
+      x: nodeX,
+      y: nodeY,
+      mode: 'markers+text',
+      text: [...Array(numNodes).keys()].map(i => `Node ${i}`),
+      textposition: "top center",
+      hoverinfo: 'text',
+      marker: {
+        size: 20,
+        color: '#1f77b4',
+        line: { width: 2, color: '#fff' }
+      },
+      type: 'scatter'
+    };
+
+    Plotly.newPlot('network-plot', [edgeTrace, nodeTrace], {
+      title: 'Interactive Network Graph',
+      showlegend: false,
+      margin: { t: 30, b: 30, l: 30, r: 30 },
+      xaxis: { showgrid: false, zeroline: false, showticklabels: false },
+      yaxis: { showgrid: false, zeroline: false, showticklabels: false }
+    });
   </script>
 </body>
 </html>
