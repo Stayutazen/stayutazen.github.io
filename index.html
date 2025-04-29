@@ -30,22 +30,24 @@
       const nodeIndices = new Map(nodes.map((n, i) => [n, i]));
 
       // Generate random node positions (or replace with actual layout)
-      const positions = nodes.map(() => [Math.random(), Math.random()]);
+      const positions = nodes.map(() => [Math.random(), Math.random(), Math.random()]);
 
       // Create edge traces
-      const edgeX = [], edgeY = [];
+      const edgeX = [], edgeY = [], edgeZ = [];
       for (const [src, tgt] of edges) {
-        const [x0, y0] = positions[nodeIndices.get(src)];
-        const [x1, y1] = positions[nodeIndices.get(tgt)];
+        const [x0, y0, z0] = positions[nodeIndices.get(src)];
+        const [x1, y1, z1] = positions[nodeIndices.get(tgt)];
         edgeX.push(x0, x1, null);
         edgeY.push(y0, y1, null);
+        edgeZ.push(z0, z1, null);
       }
 
       const edgeTrace = {
         x: edgeX,
         y: edgeY,
+        z: edgeZ,
         mode: 'lines',
-        type: 'scatter',
+        type: 'scatter3d',
         line: { width: 1, color: '#888' },
         hoverinfo: 'none'
       };
@@ -53,12 +55,14 @@
       // Create node traces
       const nodeX = positions.map(pos => pos[0]);
       const nodeY = positions.map(pos => pos[1]);
+      const nodeZ = positions.map(pos => pos[2]);
 
       const nodeTrace = {
         x: nodeX,
         y: nodeY,
+        z: nodeZ,
         mode: 'markers+text',
-        type: 'scatter',
+        type: 'scatter3d',
         marker: {
           size: 10,
           color: '#1f77b4'
@@ -72,6 +76,7 @@
         margin: { t: 20 },
         xaxis: { visible: false },
         yaxis: { visible: false },
+        zaxis: { visible: false },
         showlegend: false
       });
     }
