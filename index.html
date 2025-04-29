@@ -16,7 +16,14 @@
 
       // Parse CSV into edge list
       const lines = csvText.trim().split('\n');
-      const edges = lines.slice(1).map(line => line.split(',').map(Number));
+      const headers = lines[0].split(';');
+      const fromIndex = headers.indexOf('from');
+      const toIndex = headers.indexOf('to');
+
+      const edges = lines.slice(1).map(line => {
+          const columns = line.split(';');
+          return [parseInt(columns[fromIndex]), parseInt(columns[toIndex])];
+        });
 
       // Get unique nodes
       const nodes = [...new Set(edges.flat())];
