@@ -11,7 +11,7 @@
   <script>
     async function loadCSV() {
       try {
-        const response = await fetch('data/graph.csv');
+        const response = await fetch('data/test.csv');
         const csvText = await response.text();
         document.getElementById('csv-output').textContent = csvText;
       } catch (error) {
