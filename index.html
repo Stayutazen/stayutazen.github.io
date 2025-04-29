@@ -1,92 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>3D Network Graph with Plotly</title>
+  <meta charset="UTF-8">
+  <title>Graph</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <h2>3D Node-Link Graph</h2>
-  <div id="network-3d" style="width: 100%; height: 700px;"></div>
+  <h2>Graph</h2>
+  <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script>
-    // Define edge list
-    const edges = [
-      [0, 1], [1, 2], [2, 3], [3, 0],
-      [1, 4], [4, 5], [5, 2]
-    ];
+    async function loadAndDrawGraph() {
+      const response = await fetch('data/graph.csv');
+      const csvText = await response.text();
 
-    const numNodes = 6;
+      // Parse CSV into edge list
+      const lines = csvText.trim().split('\n');
+      const edges = lines.slice(1).map(line => line.split(',').map(Number));
 
-    // Generate 3D positions in a sphere-like layout
-    const positions = [];
-    for (let i = 0; i < numNodes; i++) {
-      const theta = Math.acos(2 * Math.random() - 1);
-      const phi = 2 * Math.PI * Math.random();
-      const x = Math.sin(theta) * Math.cos(phi);
-      const y = Math.sin(theta) * Math.sin(phi);
-      const z = Math.cos(theta);
-      positions.push([x, y, z]);
-    }
+      // Get unique nodes
+      const nodes = [...new Set(edges.flat())];
+      const nodeIndices = new Map(nodes.map((n, i) => [n, i]));
 
-    // Prepare edge lines in 3D
-    const edgeX = [];
-    const edgeY = [];
-    const edgeZ = [];
-    edges.forEach(([src, dst]) => {
-      const [x0, y0, z0] = positions[src];
-      const [x1, y1, z1] = positions[dst];
-      edgeX.push(x0, x1, null);
-      edgeY.push(y0, y1, null);
-      edgeZ.push(z0, z1, null);
-    });
+      // Generate random node positions (or replace with actual layout)
+      const positions = nodes.map(() => [Math.random(), Math.random()]);
 
-    const edgeTrace = {
-      type: 'scatter3d',
-      mode: 'lines',
-      x: edgeX,
-      y: edgeY,
-      z: edgeZ,
-      line: {
-        width: 2,
-        color: '#888'
-      },
-      hoverinfo: 'none'
-    };
-
-    // Prepare node markers
-    const nodeX = positions.map(p => p[0]);
-    const nodeY = positions.map(p => p[1]);
-    const nodeZ = positions.map(p => p[2]);
-
-    const nodeTrace = {
-      type: 'scatter3d',
-      mode: 'markers+text',
-      x: nodeX,
-      y: nodeY,
-      z: nodeZ,
-      text: [...Array(numNodes).keys()].map(i => `Node ${i}`),
-      textposition: 'top center',
-      hoverinfo: 'text',
-      marker: {
-        size: 6,
-        color: '#1f77b4',
-        line: {
-          color: '#fff',
-          width: 1
-        }
+      // Create edge traces
+      const edgeX = [], edgeY = [];
+      for (const [src, tgt] of edges) {
+        const [x0, y0] = positions[nodeIndices.get(src)];
+        const [x1, y1] = positions[nodeIndices.get(tgt)];
+        edgeX.push(x0, x1, null);
+        edgeY.push(y0, y1, null);
       }
-    };
 
-    Plotly.newPlot('network-3d', [edgeTrace, nodeTrace], {
-      title: '3D Network Graph',
-      scene: {
+      const edgeTrace = {
+        x: edgeX,
+        y: edgeY,
+        mode: 'lines',
+        type: 'scatter',
+        line: { width: 1, color: '#888' },
+        hoverinfo: 'none'
+      };
+
+      // Create node traces
+      const nodeX = positions.map(pos => pos[0]);
+      const nodeY = positions.map(pos => pos[1]);
+
+      const nodeTrace = {
+        x: nodeX,
+        y: nodeY,
+        mode: 'markers+text',
+        type: 'scatter',
+        marker: {
+          size: 10,
+          color: '#1f77b4'
+        },
+        text: nodes.map(String),
+        textposition: 'top center',
+        hoverinfo: 'text'
+      };
+
+      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+        margin: { t: 20 },
         xaxis: { visible: false },
         yaxis: { visible: false },
-        zaxis: { visible: false }
-      },
-      margin: { t: 30, l: 0, r: 0, b: 0 },
-      showlegend: false
-    });
+        showlegend: false
+      });
+    }
+
+    loadAndDrawGraph();
   </script>
 </body>
 </html>
