@@ -1,7 +1,29 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pyodide in GitHub Pages</title>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+  <h1>Hello from Pyodide</h1>
+  <pre id="output">Loading...</pre>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+  <script>
+    async function main() {
+      const pyodide = await loadPyodide();
+      await pyodide.loadPackage("numpy");
+
+      const result = await pyodide.runPythonAsync(`
+import numpy as np
+a = np.array([1, 2, 3])
+f"Sum: {np.sum(a)}"
+      `);
+
+      document.getElementById("output").textContent = result;
+    }
+
+    main();
+  </script>
 </body>
 </html>
