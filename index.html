@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Network Graph from CSV</title>
+  <title>Graph</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <h2>Network Graph</h2>
+  <h2>Graph</h2>
   <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script>
     async function loadAndDrawGraph() {
-      const response = await fetch('data/graph.csv');
+      const response = await fetch('data/test.csv');
       const csvText = await response.text();
 
       // Parse CSV into edge list
