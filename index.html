@@ -1,25 +1,78 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Pyodide in GitHub Pages</title>
+  <title>3D Node-Link Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
 </head>
 <body>
-  <h1>Hello from Pyodide</h1>
-  <pre id="output">Loading...</pre>
+  <h1>Interactive 3D Node-Link Graph in Pyodide</h1>
+  <div id="plot" style="width: 100%; height: 700px;"></div>
 
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
   <script>
     async function main() {
       const pyodide = await loadPyodide();
-      await pyodide.loadPackage("numpy");
+      await pyodide.loadPackage(["numpy", "micropip"]);
 
-      const result = await pyodide.runPythonAsync(`
-import numpy as np
-a = np.array([1, 2, 3])
-f"Sum: {np.sum(a)}"
+      await pyodide.runPythonAsync(`
+import micropip
+await micropip.install(["plotly", "networkx"])
       `);
 
-      document.getElementById("output").textContent = result;
+      await pyodide.runPythonAsync(`
+import numpy as np
+import networkx as nx
+import plotly.graph_objects as go
+import js
+
+# Create a graph (you can replace this with your CSV-based graph if needed)
+G = nx.random_geometric_graph(20, 0.4)
+pos = nx.spring_layout(G, dim=3, seed=42)
+nodes = np.array([pos[n] for n in G.nodes()])
+edges = [(pos[u], pos[v]) for u, v in G.edges()]
+
+# Edge traces (lines connecting the nodes)
+edge_x = []
+edge_y = []
+edge_z = []
+
+for edge in edges:
+    x0, y0, z0 = edge[0]
+    x1, y1, z1 = edge[1]
+    edge_x += [x0, x1, None]
+    edge_y += [y0, y1, None]
+    edge_z += [z0, z1, None]
+
+# Create the edge trace (lines)
+edge_trace = go.Scatter3d(
+    x=edge_x, y=edge_y, z=edge_z,
+    line=dict(width=1, color='gray'),
+    hoverinfo='none',
+    mode='lines'
+)
+
+# Node trace (just the positions of nodes, no labels or extra data)
+node_x, node_y, node_z = nodes[:, 0], nodes[:, 1], nodes[:, 2]
+node_trace = go.Scatter3d(
+    x=node_x, y=node_y, z=node_z,
+    mode='markers',
+    marker=dict(size=6, color='blue', opacity=0.8),
+    hoverinfo='none'  # Remove hover text
+)
+
+# Create the figure
+fig = go.Figure(data=[edge_trace, node_trace])
+fig.update_layout(
+    showlegend=False,
+    margin=dict(l=0, r=0, b=0, t=0),
+    scene=dict(xaxis=dict(visible=False),
+               yaxis=dict(visible=False),
+               zaxis=dict(visible=False))
+)
+
+# Render the plot
+js.Plotly.newPlot('plot', fig.to_plotly_json())
+      `);
     }
 
     main();
