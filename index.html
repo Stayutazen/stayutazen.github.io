@@ -2,24 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Test CSV Loading</title>
+  <title>Network Graph from CSV</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <h2>CSV Content:</h2>
-  <pre id="csv-output">Loading...</pre>
+  <h2>Network Graph</h2>
+  <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script>
-    async function loadCSV() {
-      try {
-        const response = await fetch('data/test.csv');
-        const csvText = await response.text();
-        document.getElementById('csv-output').textContent = csvText;
-      } catch (error) {
-        document.getElementById('csv-output').textContent = 'Error loading CSV: ' + error;
+    async function loadAndDrawGraph() {
+      const response = await fetch('data/graph.csv');
+      const csvText = await response.text();
+
+      // Parse CSV into edge list
+      const lines = csvText.trim().split('\n');
+      const edges = lines.slice(1).map(line => line.split(',').map(Number));
+
+      // Get unique nodes
+      const nodes = [...new Set(edges.flat())];
+      const nodeIndices = new Map(nodes.map((n, i) => [n, i]));
+
+      // Generate random node positions (or replace with actual layout)
+      const positions = nodes.map(() => [Math.random(), Math.random()]);
+
+      // Create edge traces
+      const edgeX = [], edgeY = [];
+      for (const [src, tgt] of edges) {
+        const [x0, y0] = positions[nodeIndices.get(src)];
+        const [x1, y1] = positions[nodeIndices.get(tgt)];
+        edgeX.push(x0, x1, null);
+        edgeY.push(y0, y1, null);
       }
+
+      const edgeTrace = {
+        x: edgeX,
+        y: edgeY,
+        mode: 'lines',
+        type: 'scatter',
+        line: { width: 1, color: '#888' },
+        hoverinfo: 'none'
+      };
+
+      // Create node traces
+      const nodeX = positions.map(pos => pos[0]);
+      const nodeY = positions.map(pos => pos[1]);
+
+      const nodeTrace = {
+        x: nodeX,
+        y: nodeY,
+        mode: 'markers+text',
+        type: 'scatter',
+        marker: {
+          size: 10,
+          color: '#1f77b4'
+        },
+        text: nodes.map(String),
+        textposition: 'top center',
+        hoverinfo: 'text'
+      };
+
+      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+        margin: { t: 20 },
+        xaxis: { visible: false },
+        yaxis: { visible: false },
+        showlegend: false
+      });
     }
 
-    loadCSV();
+    loadAndDrawGraph();
   </script>
 </body>
 </html>
