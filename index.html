@@ -17,7 +17,7 @@
 
       console.log(edges);
 
-      const nodeData = await d3.dsv(";", "layouts/grid-2d.csv");
+      const nodeData = await d3.dsv(";", "layouts/grid-FA2-2d.csv");
 
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
