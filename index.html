@@ -13,7 +13,7 @@
   <script>
     async function loadAndDrawGraph() {
       //loading edge list using d3
-      const edgesData = await d3.csv('data/test.csv');
+      const edgeData = await d3.dsv(";", "data/test.csv");
       const edges = edgesData.map(d => [parseInt(d.from), parseInt(d.to)]);
 
       console.log(edges);
