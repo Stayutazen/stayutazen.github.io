@@ -14,21 +14,21 @@
     async function loadAndDrawGraph() {
       const edgeData = await d3.dsv(";", "data/test.csv");
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
-      
-      console.log(edges);
 
-      // Get unique nodes
-      const nodes = [...new Set(edges.flat())];
-      const nodeIndices = new Map(nodes.map((n, i) => [n, i]));
+      const nodeData = await d3.dsv(";", "layouts/test-2d.csv");
 
-      // Generate random node positions (or replace with actual layout)
-      const positions = nodes.map(() => [Math.random(), Math.random()]);
+      const nodes = nodeData.map(d => ({
+        x: parseFloat(d.x),
+        y: parseFloat(d.y)
+      }));  
+
+      console.log(nodes);
 
       // Create edge traces
       const edgeX = [], edgeY = [];
       for (const [src, tgt] of edges) {
-        const [x0, y0] = positions[nodeIndices.get(src)];
-        const [x1, y1] = positions[nodeIndices.get(tgt)];
+        const { x: x0, y: y0 } = nodes[src];
+        const { x: x1, y: y1 } = nodes[tgt];
         edgeX.push(x0, x1, null);
         edgeY.push(y0, y1, null);
       }
@@ -43,8 +43,8 @@
       };
 
       // Create node traces
-      const nodeX = positions.map(pos => pos[0]);
-      const nodeY = positions.map(pos => pos[1]);
+      const nodeX = nodes.map(pos => pos[0]);
+      const nodeY = nodes.map(pos => pos[1]);
 
       const nodeTrace = {
         x: nodeX,
@@ -55,7 +55,7 @@
           size: 10,
           color: '#1f77b4'
         },
-        text: nodes.map(String),
+        text: nodePositions.map((_, index) => String(index)),
         textposition: 'top center',
         hoverinfo: 'text'
       };
