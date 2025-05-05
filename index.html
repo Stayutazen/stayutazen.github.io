@@ -12,10 +12,12 @@
 
   <script>
     async function loadAndDrawGraph() {
-      const edgeData = await d3.dsv(";", "data/test.csv");
+      const edgeData = await d3.dsv(";", "data/grid.csv");
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
 
-      const nodeData = await d3.dsv(";", "layouts/test-2d.csv");
+      console.log(edges);
+
+      const nodeData = await d3.dsv(";", "layouts/grid-2d.csv");
 
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
