@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Graph</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <h2>Graph</h2>
@@ -11,41 +12,31 @@
 
   <script>
     async function loadAndDrawGraph() {
-      const response = await fetch('data/test.csv');
-      const csvText = await response.text();
+      //loading edge list using d3
+      const edgesData = await d3.csv('data/test.csv');
+      const edges = edgesData.map(d => [parseInt(d.from), parseInt(d.to)]);
 
-      // Parse CSV into edge list
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(';');
-      const fromIndex = headers.indexOf('from');
-      const toIndex = headers.indexOf('to');
-
-      const edges = lines.slice(1).map(line => {
-          const columns = line.split(';');
-          return [parseInt(columns[fromIndex]), parseInt(columns[toIndex])];
-        });
+      console.log(edges);
 
       // Get unique nodes
       const nodes = [...new Set(edges.flat())];
       const nodeIndices = new Map(nodes.map((n, i) => [n, i]));
 
       // Generate random node positions (or replace with actual layout)
-      const positions = nodes.map(() => [Math.random(), Math.random(), Math.random()]);
+      const positions = nodes.map(() => [Math.random(), Math.random()]);
 
       // Create edge traces
-      const edgeX = [], edgeY = [], edgeZ = [];
+      const edgeX = [], edgeY = [];
       for (const [src, tgt] of edges) {
-        const [x0, y0, z0] = positions[nodeIndices.get(src)];
-        const [x1, y1, z1] = positions[nodeIndices.get(tgt)];
+        const [x0, y0] = positions[nodeIndices.get(src)];
+        const [x1, y1] = positions[nodeIndices.get(tgt)];
         edgeX.push(x0, x1, null);
         edgeY.push(y0, y1, null);
-        edgeZ.push(z0, z1, null);
       }
 
       const edgeTrace = {
         x: edgeX,
         y: edgeY,
-        z: edgeZ,
         mode: 'lines',
         type: 'scatter3d',
         line: { width: 1, color: '#888' },
@@ -55,12 +46,10 @@
       // Create node traces
       const nodeX = positions.map(pos => pos[0]);
       const nodeY = positions.map(pos => pos[1]);
-      const nodeZ = positions.map(pos => pos[2]);
 
       const nodeTrace = {
         x: nodeX,
         y: nodeY,
-        z: nodeZ,
         mode: 'markers+text',
         type: 'scatter3d',
         marker: {
@@ -76,8 +65,7 @@
         margin: { t: 20 },
         scene: {
           xaxis: { visible: false, showgrid: false },
-          yaxis: { visible: false, showgrid: false },
-          zaxis: { visible: false, showgrid: false }
+          yaxis: { visible: false, showgrid: false }
         },
         showlegend: false
       });
