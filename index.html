@@ -12,20 +12,9 @@
 
   <script>
     async function loadAndDrawGraph() {
-      const response = await fetch('data/test.csv');
-      const csvText = await response.text();
-
-      // Parse CSV into edge list
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(';');
-      const fromIndex = headers.indexOf('from');
-      const toIndex = headers.indexOf('to');
-
-      const edges = lines.slice(1).map(line => {
-          const columns = line.split(';');
-          return [parseInt(columns[fromIndex]), parseInt(columns[toIndex])];
-        });
-
+      const edgeData = await d3.dsv(";", "data/test.csv");
+      const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
+      
       console.log(edges);
 
       // Get unique nodes
