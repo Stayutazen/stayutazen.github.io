@@ -12,9 +12,19 @@
 
   <script>
     async function loadAndDrawGraph() {
-      //loading edge list using d3
-      const edgeData = await d3.dsv(";", "data/test.csv");
-      const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
+      const response = await fetch('data/test.csv');
+      const csvText = await response.text();
+
+      // Parse CSV into edge list
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(';');
+      const fromIndex = headers.indexOf('from');
+      const toIndex = headers.indexOf('to');
+
+      const edges = lines.slice(1).map(line => {
+          const columns = line.split(';');
+          return [parseInt(columns[fromIndex]), parseInt(columns[toIndex])];
+        });
 
       console.log(edges);
 
@@ -38,7 +48,7 @@
         x: edgeX,
         y: edgeY,
         mode: 'lines',
-        type: 'scatter3d',
+        type: 'scatter',
         line: { width: 1, color: '#888' },
         hoverinfo: 'none'
       };
@@ -51,7 +61,7 @@
         x: nodeX,
         y: nodeY,
         mode: 'markers+text',
-        type: 'scatter3d',
+        type: 'scatter',
         marker: {
           size: 10,
           color: '#1f77b4'
@@ -63,10 +73,8 @@
 
       Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
         margin: { t: 20 },
-        scene: {
-          xaxis: { visible: false, showgrid: false },
-          yaxis: { visible: false, showgrid: false }
-        },
+        xaxis: { visible: false },
+        yaxis: { visible: false },
         showlegend: false
       });
     }
