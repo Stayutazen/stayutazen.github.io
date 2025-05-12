@@ -91,47 +91,47 @@
         },
         showlegend: false
       });
+
+      const myPlot = document.getElementById("plot");
+
+      myPlot.on('plotly_relayout', (eventData) => {
+        console.log("interacted");
+        logInteraction(eventData);
+      });
+
+      // Logs when there hasn't been an interaction for 10 seconds
+      let interactionTimer = null;
+      console.log("Timer null");
+
+      function logInteraction(eventData) {
+      // If timer was running, reset it
+        if (interactionTimer){
+          console.log("Timer reset");
+          clearTimeout(interactionTimer);
+        }
+
+        console.log("Timer running");
+
+        // Start 10 second timer
+        interactionTimer = setTimeout(async () => {
+          const sceneCamera = eventData.camera;
+
+          try {
+            await addDoc(collection(db, "interactions"), {
+              camera: sceneCamera,
+              timestamp: new Date()
+            });
+            console.log("Camera logged to firebase");
+          } catch (e) {
+            console.error("Failed to log camera: ", e);
+          }
+
+          interactionTimer = null;
+        }, 10000);
+      }
     }
 
     loadAndDrawGraph();
-
-    var myPlot = document.getElementById("plot");
-    myPlot.on('plotly_relayout', (data) => {
-      console.log("interacted");
-      (data);
-    });
-    
-
-    // Logs when there hasn't been an interaction for 10 seconds
-    let interactionTimer = null;
-    console.log("Timer null");
-
-    function logInteraction(eventData) {
-      // If timer was running, reset it
-      if (interactionTimer){
-        console.log("Timer reset");
-        clearTimeout(interactionTimer);
-      }
-
-      console.log("Timer running");
-
-      // Start 10 second timer
-      interactionTimer = setTimeout(async () => {
-        const sceneCamera = eventData.camera;
-
-        try {
-          await addDoc(collection(db, "interactions"), {
-            camera: sceneCamera,
-            timestamp: new Date()
-          });
-          console.log("Camera logged to firebase");
-        } catch (e) {
-          console.error("Failed to log camera: ", e);
-        }
-
-        interactionTimer = null;
-      }, 10000);
-    }
 
   </script>
 </body>
