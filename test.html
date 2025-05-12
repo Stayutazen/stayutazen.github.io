@@ -90,19 +90,19 @@
           zaxis: { visible: false, showgrid: false, range: [0, 1] }
         },
         showlegend: false
-      }).then(() => {
-        document.getElementById('plot').on('plotly_camera', logInteraction);
       });
     }
 
     loadAndDrawGraph();
+
+    document.getElementById("plot").on('plotly_relayout', logInteraction);
     
 
     // Logs when there hasn't been an interaction for 10 seconds
     let interactionTimer = null;
     console.log("Timer null");
 
-    function logInteraction() {
+    function logInteraction(eventData) {
       // If timer was running, reset it
       if (interactionTimer){
         console.log("Timer reset");
@@ -113,7 +113,7 @@
 
       // Start 10 second timer
       interactionTimer = setTimeout(async () => {
-        const sceneCamera = document.getElementById("plot")._fullLayout.scene.camera;
+        const sceneCamera = eventData.camera;
 
         try {
           await addDoc(collection(db, "interactions"), {
