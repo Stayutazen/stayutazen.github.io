@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAzLgkWdpjaXjmQKe5usO1JNVMeDOOBsmY",
+      authDomain: "graph-memorability.firebaseapp.com",
+      projectId: "graph-memorability",
+      storageBucket: "graph-memorability.firebasestorage.app",
+      messagingSenderId: "69574821113",
+      appId: "1:69574821113:web:55a4181ce60b7332e4ce28"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <h2>Graph Test</h2>
+  <div id="plot" style="width: 100%; height: 600px;"></div>
+
+  <script>
+    async function loadAndDrawGraph() {
+      const edgeData = await d3.dsv(";", "data/grid.csv");
+      const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
+
+      console.log(edges);
+
+      const nodeData = await d3.dsv(";", "layouts/grid-3d.csv");
+
+      const nodes = nodeData.map(d => ({
+        x: parseFloat(d.x),
+        y: parseFloat(d.y),
+        z: parseFloat(d.z)
+      }));  
+
+      console.log(nodes);
+
+      // Create edge traces
+      const edgeX = [], edgeY = [], edgeZ = [];
+      for (const [src, tgt] of edges) {
+        const { x: x0, y: y0, z: z0 } = nodes[src];
+        const { x: x1, y: y1, z: z1 } = nodes[tgt];
+        edgeX.push(x0, x1, null);
+        edgeY.push(y0, y1, null);
+        edgeZ.push(z0, z1, null);
+      }
+
+      const edgeTrace = {
+        x: edgeX,
+        y: edgeY,
+        z: edgeZ,
+        mode: 'lines',
+        type: 'scatter3d',
+        line: { width: 1, color: '#888' },
+        hoverinfo: 'none'
+      };
+
+      // Create node traces
+      const nodeX = nodes.map(pos => pos.x);
+      const nodeY = nodes.map(pos => pos.y);
+      const nodeZ = nodes.map(pos => pos.z);
+
+      const nodeTrace = {
+        x: nodeX,
+        y: nodeY,
+        z: nodeZ,
+        mode: 'markers',
+        type: 'scatter3d',
+        marker: {
+          size: 10,
+          color: '#1f77b4'
+        },
+        text: nodes.map((_, index) => String(index)),
+        textposition: 'top center',
+        hoverinfo: 'text'
+      };
+
+      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+        margin: { t: 20 },
+        scene:{
+          xaxis: { visible: false, showgrid: false, range: [0, 1] },
+          yaxis: { visible: false, showgrid: false, range: [0, 1] },
+          zaxis: { visible: false, showgrid: false, range: [0, 1] }
+        },
+        showlegend: false
+      });
+    }
+
+    loadAndDrawGraph();
+  </script>
+</body>
+</html>
