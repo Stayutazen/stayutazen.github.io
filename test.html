@@ -8,7 +8,6 @@
 </head>
 <body>
   <h2>Graph Test</h2>
-  <button onclick="saveToFirebase()">Save</button>
   <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script type="module">
@@ -26,19 +25,6 @@
   
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    window.saveToFirebase = async () => {
-      try {
-        await addDoc(collection(db, "interactions"), {
-          message: "hi",
-          timestamp: new Date()
-        });
-        alert("Saved 'hi' to Firebase!");
-      } catch (e) {
-        console.error("Error writing to Firestore:", e);
-        alert("Failed to save to Firebase.");
-      }
-    };
 
     async function loadAndDrawGraph() {
       const edgeData = await d3.dsv(";", "data/grid.csv");
@@ -108,6 +94,40 @@
     }
 
     loadAndDrawGraph();
+
+    await Plotly.newPlot('plot', [edgeTrace, nodeTrace], layout);
+    document.getElementById('plot').on('plotly_camera', logInteraction);
+
+    // Logs when there hasn't been an interaction for 10 seconds
+    let interactionTimer = null;
+
+    function logInteraction() {
+      // If timer was running, reset it
+      if (interactionTimer){
+        console.log("Timer reset");
+        clearTimeout(interactionTimer);
+      }
+
+      console.log("Timer running");
+
+      // Start 10 second timer
+      interactionTimer = setTimeout(async () => {
+        const sceneCamera = document.getElementById("plot")._fullLayout.scene.camera;
+
+        try {
+          await addDoc(collection(db, "interactions"), {
+            camera: sceneCamera,
+            timestamp: new Date()
+          });
+          console.log("Camera logged to firebase");
+        } catch (e) {
+          console.error("Failed to log camera: ", e);
+        }
+
+        interactionTimer = null;
+      }, 10000);
+    }
+
   </script>
 </body>
 </html>
