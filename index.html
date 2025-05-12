@@ -17,29 +17,32 @@
 
       console.log(edges);
 
-      const nodeData = await d3.dsv(";", "layouts/grid-FA2-2d.csv");
+      const nodeData = await d3.dsv(";", "layouts/grid-3d.csv");
 
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
-        y: parseFloat(d.y)
+        y: parseFloat(d.y),
+        z: parseFloat(d.z)
       }));  
 
       console.log(nodes);
 
       // Create edge traces
-      const edgeX = [], edgeY = [];
+      const edgeX = [], edgeY = [], edgeZ = [];
       for (const [src, tgt] of edges) {
-        const { x: x0, y: y0 } = nodes[src];
-        const { x: x1, y: y1 } = nodes[tgt];
+        const { x: x0, y: y0, z: z0 } = nodes[src];
+        const { x: x1, y: y1, z: z1 } = nodes[tgt];
         edgeX.push(x0, x1, null);
         edgeY.push(y0, y1, null);
+        edgeZ.push(z0, z1, null);
       }
 
       const edgeTrace = {
         x: edgeX,
         y: edgeY,
+        z: edgeZ,
         mode: 'lines',
-        type: 'scatter',
+        type: 'scatter3d',
         line: { width: 1, color: '#888' },
         hoverinfo: 'none'
       };
@@ -47,12 +50,14 @@
       // Create node traces
       const nodeX = nodes.map(pos => pos.x);
       const nodeY = nodes.map(pos => pos.y);
+      const nodeZ = nodes.map(pos => pos.z);
 
       const nodeTrace = {
         x: nodeX,
         y: nodeY,
+        z: nodeZ,
         mode: 'markers+text',
-        type: 'scatter',
+        type: 'scatter3d',
         marker: {
           size: 10,
           color: '#1f77b4'
@@ -66,6 +71,7 @@
         margin: { t: 20 },
         xaxis: { visible: false, range: [0, 1] },
         yaxis: { visible: false, range: [0, 1] },
+        zaxis: { visible: false, range: [0, 1] },
         showlegend: false
       });
     }
