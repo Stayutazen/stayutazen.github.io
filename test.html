@@ -90,13 +90,13 @@
           zaxis: { visible: false, showgrid: false, range: [0, 1] }
         },
         showlegend: false
+      }).then(() => {
+        document.getElementById('plot').on('plotly_camera', logInteraction);
       });
     }
 
     loadAndDrawGraph();
-
-    await Plotly.newPlot('plot', [edgeTrace, nodeTrace], layout);
-    document.getElementById('plot').on('plotly_camera', logInteraction);
+    
 
     // Logs when there hasn't been an interaction for 10 seconds
     let interactionTimer = null;
