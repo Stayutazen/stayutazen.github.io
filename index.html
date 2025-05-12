@@ -69,9 +69,11 @@
 
       Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
         margin: { t: 20 },
-        xaxis: { visible: false, showgrid: false, range: [0, 1] },
-        yaxis: { visible: false, showgrid: false, range: [0, 1] },
-        zaxis: { visible: false, showgrid: false, range: [0, 1] },
+        scene:{
+          xaxis: { visible: false, showgrid: false, range: [0, 1] },
+          yaxis: { visible: false, showgrid: false, range: [0, 1] },
+          zaxis: { visible: false, showgrid: false, range: [0, 1] }
+        },
         showlegend: false
       });
     }
