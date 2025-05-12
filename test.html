@@ -94,16 +94,13 @@
 
       const myPlot = document.getElementById("plot");
 
-      myPlot.on('plotly_relayout', (eventData) => {
-        console.log("interacted");
-        logInteraction(eventData);
-      });
+      myPlot.on('plotly_relayout', logInteraction);
 
       // Logs when there hasn't been an interaction for 10 seconds
       let interactionTimer = null;
       console.log("Timer null");
 
-      function logInteraction(eventData) {
+      function logInteraction() {
       // If timer was running, reset it
         if (interactionTimer){
           console.log("Timer reset");
@@ -114,7 +111,7 @@
 
         // Start 10 second timer
         interactionTimer = setTimeout(async () => {
-          const sceneCamera = eventData.camera;
+          const sceneCamera = myPlot._fullLayout.scene.camera;
 
           try {
             await addDoc(collection(db, "interactions"), {
