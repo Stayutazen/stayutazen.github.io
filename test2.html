@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <h2>Graph</h2>
+  <div id="plot" style="width: 100%; height: 600px;"></div>
+
+  <script>
+    async function loadAndDrawGraph() {
+      const edgeData = await d3.dsv(";", "data/grid.csv");
+      const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
+
+      console.log(edges);
+
+      const nodeData = await d3.dsv(";", "layouts/grid_test.csv");
+
+      const nodes = nodeData.map(d => ({
+        x: parseFloat(d.x),
+        y: parseFloat(d.y)
+      }));  
+
+      console.log(nodes);
+
+      // Create edge traces
+      const edgeX = [], edgeY = [];
+      for (const [src, tgt] of edges) {
+        const { x: x0, y: y0 } = nodes[src];
+        const { x: x1, y: y1 } = nodes[tgt];
+        edgeX.push(x0, x1, null);
+        edgeY.push(y0, y1, null);
+      }
+
+      const edgeTrace = {
+        x: edgeX,
+        y: edgeY,
+        mode: 'lines',
+        type: 'scatter',
+        line: { width: 1, color: '#888' },
+        hoverinfo: 'none'
+      };
+
+      // Create node traces
+      const nodeX = nodes.map(pos => pos.x);
+      const nodeY = nodes.map(pos => pos.y);
+
+      const nodeTrace = {
+        x: nodeX,
+        y: nodeY,
+        mode: 'markers',
+        type: 'scatter',
+        marker: {
+          size: 10,
+          color: '#1f77b4'
+        },
+        text: nodes.map((_, index) => String(index)),
+        textposition: 'top center',
+        hoverinfo: 'text'
+      };
+
+      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+        margin: { t: 20 },
+        xaxis: { visible: false, showgrid: false, range: [0, 1] },
+        yaxis: { visible: false, showgrid: false, range: [0, 1] },
+        showlegend: false
+      });
+    }
+
+    loadAndDrawGraph();
+  </script>
+</body>
+</html>
