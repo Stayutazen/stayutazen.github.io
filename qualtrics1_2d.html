@@ -8,7 +8,7 @@
 </head>
 <body>
   <h2>Graph</h2>
-  <div id="plot" style="width: 100%; height: 1000px;"></div>
+  <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script>
     async function loadAndDrawGraph() {
@@ -17,32 +17,29 @@
 
       console.log(edges);
 
-      const nodeData = await d3.dsv(";", "layouts/dwt_1005-3d.csv");
+      const nodeData = await d3.dsv(";", "layouts/dwt_1005-2d.csv");
 
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
-        y: parseFloat(d.y),
-        z: parseFloat(d.z)
+        y: parseFloat(d.y)
       }));  
 
       console.log(nodes);
 
       // Create edge traces
-      const edgeX = [], edgeY = [], edgeZ = [];
+      const edgeX = [], edgeY = [];
       for (const [src, tgt] of edges) {
-        const { x: x0, y: y0, z: z0 } = nodes[src];
-        const { x: x1, y: y1, z: z1 } = nodes[tgt];
+        const { x: x0, y: y0 } = nodes[src];
+        const { x: x1, y: y1 } = nodes[tgt];
         edgeX.push(x0, x1, null);
         edgeY.push(y0, y1, null);
-        edgeZ.push(z0, z1, null);
       }
 
       const edgeTrace = {
         x: edgeX,
         y: edgeY,
-        z: edgeZ,
         mode: 'lines',
-        type: 'scatter3d',
+        type: 'scatter',
         line: { width: 1, color: '#888' },
         hoverinfo: 'none'
       };
@@ -50,16 +47,14 @@
       // Create node traces
       const nodeX = nodes.map(pos => pos.x);
       const nodeY = nodes.map(pos => pos.y);
-      const nodeZ = nodes.map(pos => pos.z);
 
       const nodeTrace = {
         x: nodeX,
         y: nodeY,
-        z: nodeZ,
         mode: 'markers',
-        type: 'scatter3d',
+        type: 'scatter',
         marker: {
-          size: 3,
+          size: 10,
           color: '#1f77b4'
         },
         text: nodes.map((_, index) => String(index)),
@@ -69,12 +64,8 @@
 
       Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
         margin: { t: 20 },
-        dragmode: 'orbit',
-        scene:{
-          xaxis: { visible: false, showgrid: false, range: [0, 1] },
-          yaxis: { visible: false, showgrid: false, range: [0, 1] },
-          zaxis: { visible: false, showgrid: false, range: [0, 1] }
-        },
+        xaxis: { visible: false, showgrid: false, range: [0, 1] },
+        yaxis: { visible: false, showgrid: false, range: [0, 1] },
         showlegend: false
       });
     }
