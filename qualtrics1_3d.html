@@ -12,7 +12,7 @@
 
   <script>
     async function loadAndDrawGraph() {
-      const edgeData = await d3.dsv(";", "data/dwt_1005-src.csv");
+      const edgeData = await d3.dsv(";", "data/dwt_1005.csv");
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
 
       console.log(edges);
