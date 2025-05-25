@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Graph</title>
@@ -11,23 +12,27 @@
       gap: 20px;
       justify-content: space-around;
     }
+
     .graph-box {
       width: 48%;
       border: 1px solid black;
-      padding: 10px; 
-      box-sizing: border-box; 
+      padding: 10px;
+      box-sizing: border-box;
     }
+
     .graph-title {
       text-align: center;
       font-weight: bold;
       margin-bottom: 10px;
     }
+
     .plot {
       width: 100%;
       height: 600px;
     }
   </style>
 </head>
+
 <body>
   <h2>Graphs</h2>
   <div class="graph-container">
@@ -42,22 +47,22 @@
   </div>
 
   <script>
-    async function drawGraph(plotId, edgeFile, layoutFile) {
-      const edgeData = await d3.dsv(";", edgeFile);
+    async function loadGraphData(edgeFile, layoutFile) {
+      const [edgeData, nodeData] = await Promise.all([
+        d3.dsv(";", edgeFile),
+        d3.dsv(";", layoutFile)
+      ]);
+
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
-
-      console.log(edges);
-
-      const nodeData = await d3.dsv(";", layoutFile);
-
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
         y: parseFloat(d.y)
-      }));  
+      }));
 
-      console.log(nodes);
+      return { edges, nodes };
+    }
 
-      // Create edge traces
+    function createTraces(edges, nodes) {
       const edgeX = [], edgeY = [];
       for (const [src, tgt] of edges) {
         const { x: x0, y: y0 } = nodes[src];
@@ -75,34 +80,39 @@
         hoverinfo: 'none'
       };
 
-      // Create node traces
-      const nodeX = nodes.map(pos => pos.x);
-      const nodeY = nodes.map(pos => pos.y);
-
       const nodeTrace = {
-        x: nodeX,
-        y: nodeY,
+        x: nodes.map(n => n.x),
+        y: nodes.map(n => n.y),
         mode: 'markers',
         type: 'scatter',
-        marker: {
-          size: 3,
-          color: '#1f77b4'
-        },
-        text: nodes.map((_, index) => String(index)),
+        marker: { size: 3, color: '#1f77b4' },
+        text: nodes.map((_, i) => String(i)),
         textposition: 'top center',
         hoverinfo: 'text'
       };
 
-      Plotly.newPlot(plotId, [edgeTrace, nodeTrace], {
-        margin: { t: 20 },
-        xaxis: { visible: false, showgrid: false, range: [0, 1] },
-        yaxis: { visible: false, showgrid: false, range: [0, 1] },
-        showlegend: false
-      });
+      return [edgeTrace, nodeTrace];
     }
 
-    drawGraph('plotA', 'data/dwt_1005_1.csv', 'layouts/dwt_1005_1-2d.csv');
-    drawGraph('plotB', 'data/dwt_1005_2.csv', 'layouts/dwt_1005_2-2d.csv');
+    async function renderGraphs() {
+      const [graphA, graphB] = await Promise.all([
+        loadGraphData('data/dwt_1005_1.csv', 'layouts/dwt_1005_1-2d.csv'),
+        loadGraphData('data/dwt_1005_2.csv', 'layouts/dwt_1005_2-2d.csv')
+      ]);
+
+      const layout = {
+        margin: { t: 20 },
+        xaxis: { visible: false, showgrid: false, range: [0, 1], scaleanchor: 'y' },
+        yaxis: { visible: false, showgrid: false, range: [0, 1] },
+        showlegend: false
+      };
+
+      Plotly.newPlot('plotA', createTraces(graphA.edges, graphA.nodes), layout);
+      Plotly.newPlot('plotB', createTraces(graphB.edges, graphB.nodes), layout);
+    }
+
+    renderGraphs();
   </script>
 </body>
+
 </html>
