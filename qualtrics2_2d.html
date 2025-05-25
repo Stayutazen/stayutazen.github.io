@@ -5,19 +5,47 @@
   <title>Graph</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .graph-container {
+      display: flex;
+      gap: 20px;
+      justify-content: space-around;
+    }
+    .graph-box {
+      width: 48%;
+    }
+    .graph-title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .plot {
+      width: 100%;
+      height: 600px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Graph</h2>
-  <div id="plot" style="width: 100%; height: 600px;"></div>
+  <h2>Graphs</h2>
+  <div class="graph-container">
+    <div class="graph-box">
+      <div class="graph-title">A</div>
+      <div id="plotA" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="graph-title">B</div>
+      <div id="plotB" class="plot"></div>
+    </div>
+  </div>
 
   <script>
-    async function loadAndDrawGraph() {
-      const edgeData = await d3.dsv(";", "data/dwt_1006.csv");
+    async function drawGraph(plotId, edgeFile, layoutFile) {
+      const edgeData = await d3.dsv(";", edgeFile);
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
 
       console.log(edges);
 
-      const nodeData = await d3.dsv(";", "layouts/dwt_1006-2d.csv");
+      const nodeData = await d3.dsv(";", layoutFile);
 
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
@@ -62,7 +90,7 @@
         hoverinfo: 'text'
       };
 
-      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+      Plotly.newPlot(plotId, [edgeTrace, nodeTrace], {
         margin: { t: 20 },
         xaxis: { visible: false, showgrid: false, range: [0, 1] },
         yaxis: { visible: false, showgrid: false, range: [0, 1] },
@@ -70,7 +98,8 @@
       });
     }
 
-    loadAndDrawGraph();
+    drawGraph('plotA', 'data/dwt_1005_1.csv', 'layouts/dwt_1005_1-2d.csv');
+    drawGraph('plotB', 'data/dwt_1005_2.csv', 'layouts/dwt_1005_2-2d.csv');
   </script>
 </body>
 </html>
