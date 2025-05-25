@@ -63,7 +63,7 @@
 
     async function renderGraph() {
       const { edges, nodes } = await loadGraphData("data/dwt_1005.csv", "layouts/dwt_1005-3d.csv");
-      const traces = create3DTraces(edges, nodes);
+      const traces = createTraces(edges, nodes);
 
       const layout = {
         margin: { t: 20 },
