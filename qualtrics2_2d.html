@@ -9,26 +9,27 @@
   <style>
     .graph-container {
       display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 20px;
-      justify-content: space-around;
+      padding: 20px;
     }
-
     .graph-box {
-      width: 48%;
+      flex: 1;
+      min-width: 300px;
+      max-width: 33%;
       border: 1px solid black;
       padding: 10px;
       box-sizing: border-box;
     }
-
-    .graph-title {
+    .plot {
+      width: 100%;
+      height: 500px;
+    }
+    .label {
       text-align: center;
       font-weight: bold;
       margin-bottom: 10px;
-    }
-
-    .plot {
-      width: 100%;
-      height: 600px;
     }
   </style>
 </head>
@@ -37,12 +38,16 @@
   <h2>Graphs</h2>
   <div class="graph-container">
     <div class="graph-box">
-      <div class="graph-title">A</div>
+      <div class="label">A</div>
       <div id="plotA" class="plot"></div>
     </div>
     <div class="graph-box">
-      <div class="graph-title">B</div>
+      <div class="label">B</div>
       <div id="plotB" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="label">C</div>
+      <div id="plotC" class="plot"></div>
     </div>
   </div>
 
@@ -94,11 +99,9 @@
       return [edgeTrace, nodeTrace];
     }
 
-    async function renderGraphs() {
-      const [graphA, graphB] = await Promise.all([
-        loadGraphData('data/dwt_1005_1.csv', 'layouts/dwt_1005_1-2d.csv'),
-        loadGraphData('data/dwt_1005_2.csv', 'layouts/dwt_1005_2-2d.csv')
-      ]);
+    async function renderGraph(edgeFile, layoutFile, plotId) {
+      const { edges, nodes } = await loadGraphData(edgeFile, layoutFile);
+      const traces = createTraces(edges, nodes);
 
       const layout = {
         margin: { t: 20 },
@@ -107,11 +110,12 @@
         showlegend: false
       };
 
-      Plotly.newPlot('plotA', createTraces(graphA.edges, graphA.nodes), layout);
-      Plotly.newPlot('plotB', createTraces(graphB.edges, graphB.nodes), layout);
+      Plotly.newPlot(plotId, traces, layout);
     }
 
-    renderGraphs();
+    renderGraph("data/dwt_1005.csv", "layouts/dwt_1005-2d.csv", "plotA");
+    renderGraph("data/dwt_1005_1.csv", "layouts/dwt_1005_1-2d.csv", "plotB");
+    renderGraph("data/dwt_1005_2.csv", "layouts/dwt_1005_2-2d.csv", "plotC");
   </script>
 </body>
 

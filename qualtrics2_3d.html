@@ -97,11 +97,9 @@
       return [edgeTrace, nodeTrace];
     }
 
-    async function renderGraph() {
-      const [graphA, graphB] = await Promise.all([
-        loadGraphData('data/dwt_1005_1.csv', 'layouts/dwt_1005_1-3d.csv'),
-        loadGraphData('data/dwt_1005_2.csv', 'layouts/dwt_1005_2-3d.csv')
-      ]);
+    async function renderGraph(edgeFile, layoutFile, plotId) {
+      const { edges, nodes } = await loadGraphData(edgeFile, layoutFile);
+      const traces = createTraces(edges, nodes);
 
       const layout = {
         margin: { t: 20 },
@@ -114,11 +112,12 @@
         showlegend: false
       };
 
-      Plotly.newPlot('plotA', createTraces(graphA.edges, graphA.nodes), layout);
-      Plotly.newPlot('plotB', createTraces(graphB.edges, graphB.nodes), layout);
+      Plotly.newPlot(plotId, traces, layout);
     }
 
-    renderGraph();
+    renderGraph("data/dwt_1005.csv", "layouts/dwt_1005-3d.csv", "plotA");
+    renderGraph("data/dwt_1005_1.csv", "layouts/dwt_1005_1-3d.csv", "plotB");
+    renderGraph("data/dwt_1005_2.csv", "layouts/dwt_1005_2-3d.csv", "plotC");
   </script>
 </body>
 </html>

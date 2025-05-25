@@ -61,8 +61,8 @@
       return [edgeTrace, nodeTrace];
     }
 
-    async function renderGraph() {
-      const { edges, nodes } = await loadGraphData("data/dwt_1005.csv", "layouts/dwt_1005-3d.csv");
+     async function renderGraph(edgeFile, layoutFile, plotId) {
+      const { edges, nodes } = await loadGraphData(edgeFile, layoutFile);
       const traces = createTraces(edges, nodes);
 
       const layout = {
@@ -76,10 +76,10 @@
         showlegend: false
       };
 
-      Plotly.newPlot("plot", traces, layout);
+      Plotly.newPlot(plotId, traces, layout);
     }
 
-    renderGraph();
+    renderGraph("data/dwt_1005.csv", "layouts/dwt_1005-3d.csv", "plot");
   </script>
 </body>
 </html>
