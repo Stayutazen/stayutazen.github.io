@@ -11,22 +11,22 @@
   <div id="plot" style="width: 100%; height: 600px;"></div>
 
   <script>
-    async function loadAndDrawGraph() {
-      const edgeData = await d3.dsv(";", "data/dwt_1005.csv");
+    async function loadGraphData(edgeFile, layoutFile) {
+      const [edgeData, nodeData] = await Promise.all([
+        d3.dsv(";", edgeFile),
+        d3.dsv(";", layoutFile)
+      ]);
+
       const edges = edgeData.map(d => [parseInt(d.from), parseInt(d.to)]);
-
-      console.log(edges);
-
-      const nodeData = await d3.dsv(";", "layouts/dwt_1005-2d.csv");
-
       const nodes = nodeData.map(d => ({
         x: parseFloat(d.x),
         y: parseFloat(d.y)
-      }));  
+      }));
 
-      console.log(nodes);
+      return { edges, nodes };
+    }
 
-      // Create edge traces
+    function createTraces(edges, nodes) {
       const edgeX = [], edgeY = [];
       for (const [src, tgt] of edges) {
         const { x: x0, y: y0 } = nodes[src];
@@ -44,33 +44,35 @@
         hoverinfo: 'none'
       };
 
-      // Create node traces
-      const nodeX = nodes.map(pos => pos.x);
-      const nodeY = nodes.map(pos => pos.y);
-
       const nodeTrace = {
-        x: nodeX,
-        y: nodeY,
+        x: nodes.map(n => n.x),
+        y: nodes.map(n => n.y),
         mode: 'markers',
         type: 'scatter',
-        marker: {
-          size: 3,
-          color: '#1f77b4'
-        },
-        text: nodes.map((_, index) => String(index)),
+        marker: { size: 3, color: '#1f77b4' },
+        text: nodes.map((_, i) => String(i)),
         textposition: 'top center',
         hoverinfo: 'text'
       };
 
-      Plotly.newPlot('plot', [edgeTrace, nodeTrace], {
+      return [edgeTrace, nodeTrace];
+    }
+
+    async function renderGraph() {
+      const { edges, nodes } = await loadGraphData("data/dwt_1005.csv", "layouts/dwt_1005-2d.csv");
+      const traces = createTraces(edges, nodes);
+
+      const layout = {
         margin: { t: 20 },
         xaxis: { visible: false, showgrid: false, range: [0, 1], scaleanchor: 'y' },
         yaxis: { visible: false, showgrid: false, range: [0, 1] },
         showlegend: false
-      });
+      };
+
+      Plotly.newPlot("plot", traces, layout);
     }
 
-    loadAndDrawGraph();
+    renderGraph();
   </script>
 </body>
 </html>
