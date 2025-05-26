@@ -50,7 +50,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const traces = create2DTraces(edges, nodes);
 
     const layout = {
-        margin: { t: 20 },
+        margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'pan',
         xaxis: { visible: false, showgrid: false, range: [0, 1], scaleanchor: 'y' },
         yaxis: { visible: false, showgrid: false, range: [0, 1] },
