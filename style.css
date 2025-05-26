@@ -1,0 +1,23 @@
+.graph-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.graph-box {
+    width: 48%;
+    border: 1px solid black;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.graph-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.plot {
+    width: 100%;
+    height: 600px;
+}
