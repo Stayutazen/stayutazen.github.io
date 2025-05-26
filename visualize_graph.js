@@ -115,7 +115,7 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
     const traces = create3DTraces(edges, nodes);
 
     const layout = {
-        margin: { t: 0 },
+         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
             xaxis: { visible: false, showgrid: false, range: [0, 1] },
