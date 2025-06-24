@@ -31,35 +31,13 @@ function create2DTraces(edges, nodes) {
         hoverinfo: 'none'
     };
 
-    const customNodes = {
-        0: { color: 'red', size: 8 },
-        1: { color: '#008f1f', size: 8 },
-        2: { color: '#2800c7', size: 8 }
-    };
-
-    // Default style
-    const defaultColor = '#1f77b4';
-    const defaultSize = 5;
-
-    // Build arrays for color and size
-    const nodeColors = nodes.map((_, i) =>
-        customNodes[i] ? customNodes[i].color : defaultColor
-    );
-
-    const nodeSizes = nodes.map((_, i) =>
-        customNodes[i] ? customNodes[i].size : defaultSize
-    );
-
     const nodeTrace = {
         x: nodes.map(n => n.x),
         y: nodes.map(n => n.y),
         mode: 'markers',
         type: 'scatter',
-        marker: {
-            size: nodeSizes,
-            color: nodeColors
-        },
-        text: nodes.map((_, i) => `Node ${i}`),
+        marker: { size: 6, color: '#1f77b4' },
+        text: nodes.map((_, i) => String(i)),
         textposition: 'top center',
         hoverinfo: 'text'
     };
