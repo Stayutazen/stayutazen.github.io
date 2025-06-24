@@ -31,12 +31,20 @@ function create2DTraces(edges, nodes) {
         hoverinfo: 'none'
     };
 
+    const defaultColor = '#1f77b4';
+    const nodeColors = nodes.map((_, i) => {
+        if (i === 0) return 'red';
+        if (i === 300) return 'green';
+        if (i === 153) return 'purple';
+        return defaultColor;
+    });
+
     const nodeTrace = {
         x: nodes.map(n => n.x),
         y: nodes.map(n => n.y),
         mode: 'markers',
         type: 'scatter',
-        marker: { size: 5, color: '#1f77b4' },
+        marker: { size: 5, color: nodeColors },
         text: nodes.map((_, i) => String(i)),
         textposition: 'top center',
         hoverinfo: 'text'
@@ -102,7 +110,7 @@ function create3DTraces(edges, nodes) {
         z: nodes.map(n => n.z),
         mode: 'markers',
         type: 'scatter3d',
-        marker: { size: 2, color: '#1f77b4' },
+        marker: { size: 3, color: '#1f77b4' },
         text: nodes.map((_, i) => String(i)),
         hoverinfo: 'text'
     };
