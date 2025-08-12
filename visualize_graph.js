@@ -52,8 +52,8 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'pan',
-        xaxis: { visible: false, showgrid: false, range: [0, 1], scaleanchor: 'y' },
-        yaxis: { visible: false, showgrid: false, range: [0, 1] },
+        xaxis: { visible: false, showgrid: false, scaleanchor: 'y' },
+        yaxis: { visible: false, showgrid: false },
         showlegend: false
     };
 
@@ -118,9 +118,9 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
          margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
-            xaxis: { visible: false, showgrid: false, range: [0, 1] },
-            yaxis: { visible: false, showgrid: false, range: [0, 1] },
-            zaxis: { visible: false, showgrid: false, range: [0, 1] }
+            xaxis: { visible: false, showgrid: false },
+            yaxis: { visible: false, showgrid: false },
+            zaxis: { visible: false, showgrid: false }
         },
         showlegend: false
     };
