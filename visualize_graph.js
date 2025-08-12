@@ -56,7 +56,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     const minVal = Math.min(...allVals);
     const maxVal = Math.max(...allVals);
-    const pad = 0.5 * (maxVal - minVal);
+    const pad = 0.05 * (maxVal - minVal);
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
@@ -123,23 +123,24 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
-    const allVals = [
-    ...nodes.map(n => n.x),
-    ...nodes.map(n => n.y),
-    ...nodes.map(n => n.z)
-    ];
+    const xVals = nodes.map(n => n.x);
+    const yVals = nodes.map(n => n.y);
+    const zVals = nodes.map(n => n.z);
 
-    const minVal = Math.min(...allVals);
-    const maxVal = Math.max(...allVals);
-    const pad = 0.05 * (maxVal - minVal);
+    const xMin = Math.min(...xVals);
+    const xMax = Math.max(...xVals);
+    const yMin = Math.min(...yVals);
+    const yMax = Math.max(...yVals);
+    const zMin = Math.min(...zVals);
+    const zMax = Math.max(...zVals);
 
     const layout = {
          margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
-            xaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad] },
-            yaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad] },
-            zaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad] }
+            xaxis: { visible: false, showgrid: false, range: [xMin, xMax] },
+            yaxis: { visible: false, showgrid: false, range: [yMin, yMax] },
+            zaxis: { visible: false, showgrid: false, range: [zMin, zMax] }
         },
         showlegend: false
     };
