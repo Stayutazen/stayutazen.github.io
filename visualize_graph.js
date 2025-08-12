@@ -56,7 +56,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     const minVal = Math.min(...allVals);
     const maxVal = Math.max(...allVals);
-    const pad = 0.1 * (maxVal - minVal);
+    const pad = 0.5 * (maxVal - minVal);
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
