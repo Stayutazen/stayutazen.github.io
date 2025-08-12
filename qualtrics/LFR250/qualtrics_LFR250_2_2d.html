@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="graph-container">
+    <div class="graph-box">
+      <div class="label">A</div>
+      <div id="plotA" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="label">B</div>
+      <div id="plotB" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="label">C</div>
+      <div id="plotC" class="plot"></div>
+    </div>
+  </div>
+
+  <script src="visualize_graph.js"></script>
+  <script>
+    render2DGraph("data/LFR_250/LFR_250_01_30_12_3.csv", "layouts/LFR_250/LFR_250_01_30_12_3-2d.csv", "plotA");
+    render2DGraph("data/LFR_250/LFR_250_01_30_12_2.csv", "layouts/LFR_250/LFR_250_01_30_12_2-2d.csv", "plotB");
+    render2DGraph("data/LFR_250/LFR_250_01_30_12.csv", "layouts/LFR_250/LFR_250_01_30_12-2d.csv", "plotC");
+  </script>
+</body>
+
+</html>
