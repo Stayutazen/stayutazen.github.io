@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="graph-container">
+    <div class="graph-box">
+      <div class="label">A</div>
+      <div id="plotA" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="label">B</div>
+      <div id="plotB" class="plot"></div>
+    </div>
+    <div class="graph-box">
+      <div class="label">C</div>
+      <div id="plotC" class="plot"></div>
+    </div>
+  </div>
+
+  <script src="visualize_graph.js"></script>
+  <script>
+    render2DGraph("data/PC_5_04/PC_5_04_3.csv", "layouts/PC_5_04/PC_5_04_3-2d.csv", "plotA");
+    render2DGraph("data/PC_5_04/PC_5_04.csv", "layouts/PC_5_04/PC_5_04-2d.csv", "plotB");
+    render2DGraph("data/PC_5_04/PC_5_04_2.csv", "layouts/PC_5_04/PC_5_04_2-2d", "plotC");
+  </script>
+</body>
+
+</html>
