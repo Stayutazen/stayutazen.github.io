@@ -45,8 +45,27 @@ function create2DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
+function rotateNodes(nodes, angle) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    return nodes.map(n => ({
+        x: n.x * cosA - n.y * sinA,
+        y: n.x * sinA + n.y * cosA
+    }));
+}
+
 async function render2DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
+
+    randomView = true;
+
+    if (randomView) {
+        const angle = Math.random() * 2 * Math.PI;
+        nodes = rotateNodes(nodes, angle);
+        console.log("random rotation taken");
+    }
+
     const traces = create2DTraces(edges, nodes);
 
     const allVals = [
