@@ -13,60 +13,6 @@ async function load2DGraphData(edgeFile, layoutFile) {
     return { edges, nodes };
 }
 
-function rotateGraph(nodes, edges, angleDeg) {
-    const angle = angleDeg * Math.PI / 180;
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
-
-    // rotate nodes
-    const rotatedNodes = nodes.map(n => ({
-        x: n.x * cosA - n.y * sinA,
-        y: n.x * sinA + n.y * cosA
-    }));
-
-    // rebuild edges after rotation
-    const rotatedEdges = edges.map(([src, tgt]) => [
-        rotatedNodes[src],
-        rotatedNodes[tgt]
-    ]);
-
-    // build traces again
-    const edgeX = [], edgeY = [];
-    for (const [n0, n1] of rotatedEdges) {
-        edgeX.push(n0.x, n1.x, null);
-        edgeY.push(n0.y, n1.y, null);
-    }
-
-    const edgeTrace = {
-        x: edgeX,
-        y: edgeY,
-        mode: 'lines',
-        type: 'scatter',
-        line: { width: 1, color: '#888' },
-        hoverinfo: 'none'
-    };
-
-    const nodeTrace = {
-        x: rotatedNodes.map(n => n.x),
-        y: rotatedNodes.map(n => n.y),
-        mode: 'markers',
-        type: 'scatter',
-        marker: { size: 6, color: '#1f77b4' }
-    };
-
-    return [edgeTrace, nodeTrace];
-}
-
-function updateRotation(plotId, nodes, edges, angle) {
-    const traces = rotateGraph(nodes, edges, angle);
-    Plotly.react(plotId, traces, {
-        margin: { l: 0, r: 0, t: 0, b: 0 },
-        xaxis: { visible: false, showgrid: false, scaleanchor: 'y' },
-        yaxis: { visible: false, showgrid: false },
-        showlegend: false
-    });
-}
-
 function create2DTraces(edges, nodes) {
     const edgeX = [], edgeY = [];
     for (const [src, tgt] of edges) {
