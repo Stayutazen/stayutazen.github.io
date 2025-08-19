@@ -114,24 +114,13 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
-    const xVals = nodes.map(n => n.x);
-    const yVals = nodes.map(n => n.y);
-    const zVals = nodes.map(n => n.z);
-
-    const xMin = Math.min(...xVals);
-    const xMax = Math.max(...xVals);
-    const yMin = Math.min(...yVals);
-    const yMax = Math.max(...yVals);
-    const zMin = Math.min(...zVals);
-    const zMax = Math.max(...zVals);
-
     const layout = {
          margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
-            xaxis: { visible: false, showgrid: false, range: [xMin, xMax] },
-            yaxis: { visible: false, showgrid: false, range: [yMin, yMax] },
-            zaxis: { visible: false, showgrid: false, range: [zMin, zMax] }
+            xaxis: { visible: false, showgrid: false, range: [0, 1] },
+            yaxis: { visible: false, showgrid: false, range: [0, 1] },
+            zaxis: { visible: false, showgrid: false, range: [0, 1] }
         },
         showlegend: false
     };
