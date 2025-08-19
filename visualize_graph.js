@@ -119,7 +119,7 @@ function create3DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
-async function render3DGraph(edgeFile, layoutFile, plotId) {
+async function render3DGraph(edgeFile, layoutFile, plotId, randomView) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
@@ -133,8 +133,6 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
     const yMax = Math.max(...yVals);
     const zMin = Math.min(...zVals);
     const zMax = Math.max(...zVals);
-
-    randomView = true;
 
     let camera = {
         eye: { x: 1.25, y: 1.25, z: 1.25 }
