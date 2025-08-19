@@ -151,7 +151,10 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
                 z: r * Math.cos(phi)
             }
         };
+        console.log("random view taken");
     }
+
+    console.log(camera);
 
     const layout = {
          margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
