@@ -8,10 +8,36 @@
 </head>
 <body>
   <div id="plot" style="width: 100%; height: 800px;"></div>
+  <div style="margin:20px; text-align:center;">
+    <label for="rotationSlider">Rotate Graph: </label>
+    <input 
+      type="range" 
+      id="rotationSlider" 
+      min="0" 
+      max="360" 
+      value="0" 
+      step="1" 
+      style="width: 60%;"
+    >
+    <span id="angleValue">0°</span>
+  </div>
 
   <script src="/visualize_graph.js"></script>
   <script>
-    render2DGraph("/data/LFR_250/LFR_250_01_30_12.csv", "/layouts/LFR_250/LFR_250_01_30_12-2d.csv", "plot");
+    let edges, nodes;
+    render2DGraph("/data/LFR_250/LFR_250_01_30_12.csv", "/layouts/LFR_250/LFR_250_01_30_12-2d.csv", "plot").then(data => {
+      edges = data.edges;
+      nodes = data.nodes;
+    });
+    
+    const slider = document.getElementById("rotationSlider");
+    const angleValue = document.getElementById("angleValue");
+
+    slider.addEventListener("input", function() {
+      const angle = parseInt(this.value);
+      angleValue.textContent = angle + "°";
+      updateRotation("plot", nodes, edges, angle);
+    });
   </script>
 </body>
 </html>
