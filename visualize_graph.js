@@ -49,20 +49,11 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
     const traces = create2DTraces(edges, nodes);
 
-    const allVals = [
-    ...nodes.map(n => n.x),
-    ...nodes.map(n => n.y)
-    ];
-
-    const minVal = Math.min(...allVals);
-    const maxVal = Math.max(...allVals);
-    const pad = 0.05 * (maxVal - minVal);
-
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'pan',
-        xaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad], scaleanchor: 'y' },
-        yaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad] },
+        xaxis: { visible: false, showgrid: false, range: [0, 1], scaleanchor: 'y' },
+        yaxis: { visible: false, showgrid: false, range: [0, 1] },
         showlegend: false
     };
 
