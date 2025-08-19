@@ -134,13 +134,33 @@ async function render3DGraph(edgeFile, layoutFile, plotId) {
     const zMin = Math.min(...zVals);
     const zMax = Math.max(...zVals);
 
+    randomView = true;
+
+    let camera = {
+        eye: { x: 1.25, y: 1.25, z: 1.25 }
+    };
+
+    if (randomView) {
+        const r = 2.0; // distance of camera from origin
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.random() * Math.PI;
+        camera = {
+            eye: {
+                x: r * Math.sin(phi) * Math.cos(theta),
+                y: r * Math.sin(phi) * Math.sin(theta),
+                z: r * Math.cos(phi)
+            }
+        };
+    }
+
     const layout = {
          margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
             xaxis: { visible: false, showgrid: false, range: [xMin, xMax] },
             yaxis: { visible: false, showgrid: false, range: [yMin, yMax] },
-            zaxis: { visible: false, showgrid: false, range: [zMin, zMax] }
+            zaxis: { visible: false, showgrid: false, range: [zMin, zMax] },
+            camera: camera
         },
         showlegend: false
     };
