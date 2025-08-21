@@ -58,13 +58,13 @@ function rotateNodes(nodes, angle) {
 async function render2DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
-    randomView = true;
+    // randomView = true;
 
-    if (randomView) {
-        const angle = Math.random() * 2 * Math.PI;
-        nodes = rotateNodes(nodes, angle);
-        console.log("random rotation taken");
-    }
+    // if (randomView) {
+    //     const angle = Math.random() * 2 * Math.PI;
+    //     nodes = rotateNodes(nodes, angle);
+    //     console.log("random rotation taken");
+    // }
 
     const traces = create2DTraces(edges, nodes);
 
