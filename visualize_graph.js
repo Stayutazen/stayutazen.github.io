@@ -23,7 +23,6 @@ function create2DTraces(edges, nodes) {
     }
 
     const edgeTrace = {
-        name: "edges",
         x: edgeX,
         y: edgeY,
         mode: 'lines',
@@ -33,10 +32,9 @@ function create2DTraces(edges, nodes) {
     };
 
     const nodeTrace = {
-        name: "nodes",
         x: nodes.map(n => n.x),
         y: nodes.map(n => n.y),
-        mode: 'markers+text',
+        mode: 'markers',
         type: 'scatter',
         marker: { size: 6, color: '#1f77b4' },
         text: nodes.map((_, i) => String(i)),
@@ -46,6 +44,7 @@ function create2DTraces(edges, nodes) {
 
     return [edgeTrace, nodeTrace];
 }
+
 
 function rotate2D(x, y, theta, cx = 0, cy = 0) {
     const cosT = Math.cos(theta);
