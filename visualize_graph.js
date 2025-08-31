@@ -45,47 +45,83 @@ function create2DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
-function rotateNodes(nodes, angle) {
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
+function rotate2D(x, y, theta, cx = 0, cy = 0) {
+    const cosT = Math.cos(theta);
+    const sinT = Math.sin(theta);
+    const dx = x - cx;
+    const dy = y - cy;
+    return [
+        cx + cosT * dx - sinT * dy,
+        cy + sinT * dx + cosT * dy
+    ];
+}
 
-    return nodes.map(n => ({
-        x: n.x * cosA - n.y * sinA,
-        y: n.x * sinA + n.y * cosA
-    }));
+function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
+    const rotatedNodes = nodes.map(n => {
+        const [xr, yr] = rotate2D(n.x, n.y, theta, cx, cy);
+        return { x: xr, y: yr };
+    });
+
+    return create2DTraces(edges, rotatedNodes);
 }
 
 async function render2DGraph(edgeFile, layoutFile, plotId) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
-    // randomView = true;
+    // compute graph center as rotation pivot
+    const cx = nodes.reduce((s, n) => s + n.x, 0) / nodes.length;
+    const cy = nodes.reduce((s, n) => s + n.y, 0) / nodes.length;
 
-    // if (randomView) {
-    //     const angle = Math.random() * 2 * Math.PI;
-    //     nodes = rotateNodes(nodes, angle);
-    //     console.log("random rotation taken");
-    // }
-
+    // base traces (theta = 0)
     const traces = create2DTraces(edges, nodes);
 
     const allVals = [
-    ...nodes.map(n => n.x),
-    ...nodes.map(n => n.y)
+        ...nodes.map(n => n.x),
+        ...nodes.map(n => n.y)
     ];
-
     const minVal = Math.min(...allVals);
     const maxVal = Math.max(...allVals);
     const pad = 0.05 * (maxVal - minVal);
+
+    // generate frames (e.g. 36 frames for full circle)
+    const nFrames = 36;
+    const thetas = Array.from({ length: nFrames }, (_, k) => (2 * Math.PI * k) / nFrames);
+
+    const frames = thetas.map((theta, k) => {
+        const rotated = createRotatedTraces(edges, nodes, theta, cx, cy);
+        return {
+            name: `frame${k + 1}`,
+            data: rotated
+        };
+    });
+
+    const sliders = [{
+        steps: frames.map((f, k) => ({
+            method: "animate",
+            args: [[f.name], {
+                mode: "immediate",
+                frame: { duration: 0, redraw: false },
+                transition: { duration: 0 }
+            }],
+            label: `${k}`
+        })),
+        transition: { duration: 0 },
+        x: 0.1,
+        len: 0.8
+    }];
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'pan',
         xaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad], scaleanchor: 'y' },
         yaxis: { visible: false, showgrid: false, range: [minVal - pad, maxVal + pad] },
-        showlegend: false
+        showlegend: false,
+        sliders
     };
 
-    Plotly.newPlot(plotId, traces, layout, {scrollZoom: true});
+    Plotly.newPlot(plotId, traces, layout).then(() => {
+        Plotly.addFrames(plotId, frames);
+    });
 }
 
 async function load3DGraphData(edgeFile, layoutFile) {
