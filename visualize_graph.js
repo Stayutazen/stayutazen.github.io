@@ -37,8 +37,6 @@ function create2DTraces(edges, nodes) {
         mode: 'markers',
         type: 'scatter',
         marker: { size: 6, color: '#1f77b4' },
-        text: nodes.map((_, i) => String(i)),
-        textposition: 'top center',
         hoverinfo: 'text'
     };
 
