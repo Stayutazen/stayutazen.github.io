@@ -74,8 +74,6 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     // base traces (theta = 0)
     const traces = create2DTraces(edges, nodes);
-    traces[0].uid = "edges";
-    traces[1].uid = "nodes";
 
     const allVals = [
         ...nodes.map(n => n.x),
@@ -91,18 +89,14 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     const frames = thetas.map((theta, k) => {
         const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
+
         return {
             name: `frame${k + 1}`,
             data: [
-                {
-                    ...rotatedTraces[0],
-                    uid: "edges"
-                },
-                {
-                    ...rotatedTraces[1],
-                    uid: "nodes" 
-                }
-            ]
+                rotatedTraces[0], // edge trace
+                rotatedTraces[1]  // node trace
+            ],
+            traces: [0, 1]  // 🔑 tell Plotly these replace traces 0 and 1
         };
     });
 
