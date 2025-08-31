@@ -23,6 +23,7 @@ function create2DTraces(edges, nodes) {
     }
 
     const edgeTrace = {
+        name: "edges",
         x: edgeX,
         y: edgeY,
         mode: 'lines',
@@ -32,9 +33,10 @@ function create2DTraces(edges, nodes) {
     };
 
     const nodeTrace = {
+        name: "nodes",
         x: nodes.map(n => n.x),
         y: nodes.map(n => n.y),
-        mode: 'markers',
+        mode: 'markers+text',
         type: 'scatter',
         marker: { size: 6, color: '#1f77b4' },
         text: nodes.map((_, i) => String(i)),
@@ -88,17 +90,16 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const thetas = Array.from({ length: nFrames }, (_, k) => (2 * Math.PI * k) / nFrames);
 
     const frames = thetas.map((theta, k) => {
-        const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
+    const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
 
-        return {
-            name: `frame${k + 1}`,
-            data: [
-                rotatedTraces[0], // edge trace
-                rotatedTraces[1]  // node trace
-            ],
-            traces: [0, 1]  // 🔑 tell Plotly these replace traces 0 and 1
-        };
-    });
+    return {
+        name: `frame${k + 1}`,
+        data: [
+            rotatedTraces[0],
+            rotatedTraces[1] 
+        ]
+    };
+});
 
     const sliders = [{
         steps: frames.map((f, k) => ({
