@@ -59,10 +59,13 @@ function rotate2D(x, y, theta, cx = 0, cy = 0) {
 }
 
 function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
+    console.log("Original nodes:", nodes);
     const rotatedNodes = nodes.map(n => {
         const [xr, yr] = rotate2D(n.x, n.y, theta, cx, cy);
         return { x: xr, y: yr };
     });
+
+    console.log("Rotated nodes:", rotatedNodes);
 
     return create2DTraces(edges, rotatedNodes);
 }
@@ -90,16 +93,17 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const thetas = Array.from({ length: nFrames }, (_, k) => (2 * Math.PI * k) / nFrames);
 
     const frames = thetas.map((theta, k) => {
-    const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
+        const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
 
-    return {
-        name: `frame${k + 1}`,
-        data: [
-            rotatedTraces[0],
-            rotatedTraces[1] 
-        ]
-    };
-});
+        return {
+            name: `frame${k + 1}`,
+            data: [
+                rotatedTraces[0], // edge trace
+                rotatedTraces[1]  // node trace
+            ],
+            traces: [0, 1] 
+        };
+    });
 
     const sliders = [{
         steps: frames.map((f, k) => ({
