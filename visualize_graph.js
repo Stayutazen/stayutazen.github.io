@@ -56,13 +56,10 @@ function rotate2D(x, y, theta, cx = 0, cy = 0) {
 }
 
 function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
-    console.log("Original nodes:", nodes);
     const rotatedNodes = nodes.map(n => {
         const [xr, yr] = rotate2D(n.x, n.y, theta, cx, cy);
         return { x: xr, y: yr };
     });
-
-    console.log("Rotated nodes:", rotatedNodes);
 
     return create2DTraces(edges, rotatedNodes);
 }
@@ -77,6 +74,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     // base traces (theta = 0)
     const traces = create2DTraces(edges, nodes);
 
+    // boudning box of graph
     const allVals = [
         ...nodes.map(n => n.x),
         ...nodes.map(n => n.y)
@@ -101,6 +99,8 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
             traces: [0, 1] 
         };
     });
+
+    console.log("All frames:", frames);
 
     const sliders = [{
         steps: frames.map((f, k) => ({
