@@ -128,6 +128,12 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     Plotly.newPlot(plotId, traces, layout).then(() => {
         Plotly.addFrames(plotId, frames);
+
+        Plotly.animate(plotId, ['frame4'], { 
+            mode: 'immediate',
+            frame: { duration: 0, redraw: true },
+            transition: { duration: 0 }
+        });
     });
 }
 
