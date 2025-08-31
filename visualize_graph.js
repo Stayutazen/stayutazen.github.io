@@ -74,6 +74,8 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     // base traces (theta = 0)
     const traces = create2DTraces(edges, nodes);
+    traces[0].uid = "edges";
+    traces[1].uid = "nodes";
 
     const allVals = [
         ...nodes.map(n => n.x),
@@ -88,10 +90,19 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
     const thetas = Array.from({ length: nFrames }, (_, k) => (2 * Math.PI * k) / nFrames);
 
     const frames = thetas.map((theta, k) => {
-        const rotated = createRotatedTraces(edges, nodes, theta, cx, cy);
+        const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
         return {
             name: `frame${k + 1}`,
-            data: rotated
+            data: [
+                {
+                    ...rotatedTraces[0],
+                    uid: "edges"
+                },
+                {
+                    ...rotatedTraces[1],
+                    uid: "nodes" 
+                }
+            ]
         };
     });
 
