@@ -72,13 +72,26 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const cy = nodes.reduce((s, n) => s + n.y, 0) / nodes.length;
 
     // base traces (theta = 0)
-    const traces = create2DTraces(edges, nodes);
+    let traces = create2DTraces(edges, nodes);
 
     // generate frames (e.g. 36 frames for full circle)
     const nFrames = 36;
     const thetas = Array.from({ length: nFrames }, (_, k) => (2 * Math.PI * k) / nFrames);
 
-    const frames = thetas.map((theta, k) => {
+    let startIndex = 0
+
+    // if randomview, take a random start index and change the initial trace accordingly
+    if(randomView){
+        startIndex = Math.floor(Math.random() * nFrames);
+        traces = createRotatedTraces(edges, nodes, thetas[startIndex], cx, cy);
+    }
+    
+    const reorder = [
+        ...thetas.slice(startIndex),
+        ...thetas.slice(0, startIndex)
+    ];
+
+    const frames = reorder.map((theta, k) => {
         const rotatedTraces = createRotatedTraces(edges, nodes, theta, cx, cy);
 
         return {
@@ -90,23 +103,6 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
             traces: [0, 1] 
         };
     });
-
-    let startIndex = 0
-
-    if(randomView){
-        startIndex = Math.floor(Math.random() * nFrames);
-    }
-
-    // const reorderedFrames = [
-    //     ...frames.slice(startIndex),
-    //     ...frames.slice(0, startIndex)
-    // ];
-
-    // reorderedFrames.push({
-    //     name: `frame${nFrames + 1}`,
-    //     data: reorderedFrames[0].data,
-    //     traces: [0, 1]
-    // });
 
     frames.push({
         name: `frame${nFrames + 1}`,
@@ -131,16 +127,13 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
                 frame: { duration: 0, redraw: true },
                 transition: { duration: 0 }
             }],
-            label: f.name
+            label: ''
         })),
         transition: { duration: 0 },
         x: 0.1,
         len: 0.8,
         tickcolor: 'rgba(0,0,0,0)'
     }];
-
-    // console.log(reorderedFrames)
-    console.log(frames)
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
@@ -150,8 +143,6 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
         showlegend: false,
         sliders
     };
-
-    // const initialTrace = reorderedFrames[0].data // initial trace is different after reordering as well
 
     Plotly.newPlot(plotId, traces, layout, { scrollZoom: true }).then(() => {
         Plotly.addFrames(plotId, frames);
