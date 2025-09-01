@@ -120,7 +120,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const pad = 0.05 * (maxVal - minVal);
 
     const sliders = [{
-        steps: frames.map((f, k) => ({
+        steps: frames.map(f => ({
             method: "animate",
             args: [[f.name], {
                 mode: "immediate",
@@ -199,7 +199,7 @@ function create3DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
-async function render3DGraph(edgeFile, layoutFile, plotId, randomView) {
+async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
@@ -216,8 +216,15 @@ async function render3DGraph(edgeFile, layoutFile, plotId, randomView) {
 
     let camera = {
         eye: { x: 1.25, y: 1.25, z: 1.25 }
-    };
+    }
 
+    if(pos){
+        camera = {
+            eye: pos[0],
+            up: pos[1]
+        };
+    }
+    
     if (randomView) {
         const r = 2.0; // distance of camera from origin
         const theta = Math.random() * 2 * Math.PI;
@@ -229,10 +236,7 @@ async function render3DGraph(edgeFile, layoutFile, plotId, randomView) {
                 z: r * Math.cos(phi)
             }
         };
-        console.log("random view taken");
     }
-
-    console.log(camera);
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
