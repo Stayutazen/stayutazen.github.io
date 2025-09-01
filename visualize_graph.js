@@ -64,7 +64,7 @@ function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
     return create2DTraces(edges, rotatedNodes);
 }
 
-async function render2DGraph(edgeFile, layoutFile, plotId) {
+async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
     // compute graph center as rotation pivot
@@ -73,15 +73,6 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
 
     // base traces (theta = 0)
     const traces = create2DTraces(edges, nodes);
-
-    // boudning box of graph
-    const allVals = [
-        ...nodes.map(n => n.x),
-        ...nodes.map(n => n.y)
-    ];
-    const minVal = Math.min(...allVals);
-    const maxVal = Math.max(...allVals);
-    const pad = 0.05 * (maxVal - minVal);
 
     // generate frames (e.g. 36 frames for full circle)
     const nFrames = 36;
@@ -100,22 +91,56 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
         };
     });
 
-    console.log("All frames:", frames);
+    let startIndex = 0
+
+    if(randomView){
+        startIndex = Math.floor(Math.random() * nFrames);
+    }
+
+    // const reorderedFrames = [
+    //     ...frames.slice(startIndex),
+    //     ...frames.slice(0, startIndex)
+    // ];
+
+    // reorderedFrames.push({
+    //     name: `frame${nFrames + 1}`,
+    //     data: reorderedFrames[0].data,
+    //     traces: [0, 1]
+    // });
+
+    frames.push({
+        name: `frame${nFrames + 1}`,
+        data: frames[0].data,
+        traces: [0, 1]
+    });
+
+    const allVals = frames.flatMap(f => {
+        const nodeTrace = f.data[1];
+        return [...nodeTrace.x, ...nodeTrace.y];
+    });
+
+    const minVal = Math.min(...allVals);
+    const maxVal = Math.max(...allVals);
+    const pad = 0.05 * (maxVal - minVal);
 
     const sliders = [{
         steps: frames.map((f, k) => ({
             method: "animate",
             args: [[f.name], {
                 mode: "immediate",
-                frame: { duration: 0, redraw: false },
+                frame: { duration: 0, redraw: true },
                 transition: { duration: 0 }
             }],
-            label: `${k}`
+            label: f.name
         })),
         transition: { duration: 0 },
         x: 0.1,
-        len: 0.8
+        len: 0.8,
+        tickcolor: 'rgba(0,0,0,0)'
     }];
+
+    // console.log(reorderedFrames)
+    console.log(frames)
 
     const layout = {
         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
@@ -126,14 +151,10 @@ async function render2DGraph(edgeFile, layoutFile, plotId) {
         sliders
     };
 
-    Plotly.newPlot(plotId, traces, layout).then(() => {
-        Plotly.addFrames(plotId, frames);
+    // const initialTrace = reorderedFrames[0].data // initial trace is different after reordering as well
 
-        Plotly.animate(plotId, ['frame4'], { 
-            mode: 'immediate',
-            frame: { duration: 0, redraw: true },
-            transition: { duration: 0 }
-        });
+    Plotly.newPlot(plotId, traces, layout, { scrollZoom: true }).then(() => {
+        Plotly.addFrames(plotId, frames);
     });
 }
 
@@ -223,7 +244,7 @@ async function render3DGraph(edgeFile, layoutFile, plotId, randomView) {
     console.log(camera);
 
     const layout = {
-         margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
+        margin: { l: 0, r: 0, t: 0, b: 0, pad: 0 },
         dragmode: 'orbit',
         scene: {
             xaxis: { visible: false, showgrid: false, range: [xMin, xMax] },
