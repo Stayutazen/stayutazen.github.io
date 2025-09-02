@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div id="plot" style="width: 100%; height: 700px;"></div>
+
+  <script src="/visualize_graph.js"></script>
+  <script>
+    render2DGraph("/data/block_2000/block_2000_5.csv", "/layouts/block_2000/block_2000_5-2d.csv", "plot", false)
+  </script>
+</body>
+</html>

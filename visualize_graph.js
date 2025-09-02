@@ -110,13 +110,20 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
         traces: [0, 1]
     });
 
-    const allVals = frames.flatMap(f => {
-        const nodeTrace = f.data[1];
-        return [...nodeTrace.x, ...nodeTrace.y];
-    });
+    let minVal = Infinity;
+    let maxVal = -Infinity;
 
-    const minVal = Math.min(...allVals);
-    const maxVal = Math.max(...allVals);
+    for (const f of frames) {
+      const nodeTrace = f.data[1];
+      for (const val of nodeTrace.x) {
+        if (val < minVal) minVal = val;
+        if (val > maxVal) maxVal = val;
+      }
+      for (const val of nodeTrace.y) {
+        if (val < minVal) minVal = val;
+        if (val > maxVal) maxVal = val;
+      }
+    }
     const pad = 0.05 * (maxVal - minVal);
 
     const sliders = [{
