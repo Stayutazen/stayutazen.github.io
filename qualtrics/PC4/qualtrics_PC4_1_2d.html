@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Graph</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div id="plot" style="width: 100%; height: 700px;"></div>
+
+  <script src="/visualize_graph.js"></script>
+  <script>
+    render2DGraph("/data/PC_4/PC_4_1.csv", "/layouts/PC_4/PC_4_1-2d.csv", "plot", false);
+  </script>
+</body>
+</html>
