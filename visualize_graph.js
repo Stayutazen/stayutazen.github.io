@@ -151,7 +151,22 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
         sliders
     };
 
-    Plotly.newPlot(plotId, traces, layout, { scrollZoom: true }).then(() => {
+    const config = {
+    scrollZoom: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: [
+        "toImage",
+        "zoom2d",
+        "select2d",
+        "lasso2d",
+        "toggleSpikelines",
+        "hoverClosestCartesian",
+        "hoverCompareCartesian",
+        "autoScale2d"
+        ]
+    };
+
+    Plotly.newPlot(plotId, traces, layout, config).then(() => {
         Plotly.addFrames(plotId, frames);
     });
 }
@@ -257,5 +272,16 @@ async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos) {
         showlegend: false
     };
 
-    Plotly.newPlot(plotId, traces, layout);
+    const config = {
+    scrollZoom: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: [
+        "toImage",
+        "tableRotation",
+        "resetCameraLastSave3d",
+        "hoverClosest3d"
+        ]
+    };
+
+    Plotly.newPlot(plotId, traces, layout, config);
 }
