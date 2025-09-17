@@ -131,7 +131,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
             method: "animate",
             args: [[f.name], {
                 mode: "immediate",
-                frame: { duration: 0, redraw: true },
+                frame: { duration: 0, redraw: false },
                 transition: { duration: 0 }
             }],
             label: ''
