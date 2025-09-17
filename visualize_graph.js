@@ -131,7 +131,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
             method: "animate",
             args: [[f.name], {
                 mode: "immediate",
-                frame: { duration: 0, redraw: true },
+                frame: { duration: 0, redraw: false },
                 transition: { duration: 0 }
             }],
             label: ''
@@ -168,7 +168,12 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
 
     Plotly.newPlot(plotId, traces, layout, config).then(() => {
         Plotly.addFrames(plotId, frames);
+
+        document.getElementById(plotId).on('plotly_animated', () => {
+        Plotly.redraw(plotId);
+        });
     });
+
 }
 
 async function load3DGraphData(edgeFile, layoutFile) {
