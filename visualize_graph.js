@@ -64,7 +64,7 @@ function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
     return create2DTraces(edges, rotatedNodes);
 }
 
-async function render2DGraph(edgeFile, layoutFile, plotId, randomView, redraw) {
+async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
     // compute graph center as rotation pivot
@@ -131,7 +131,7 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView, redraw) {
             method: "animate",
             args: [[f.name], {
                 mode: "immediate",
-                frame: { duration: 0, redraw: redraw },
+                frame: { duration: 0, redraw: false },
                 transition: { duration: 0 }
             }],
             label: ''
@@ -170,11 +170,9 @@ async function render2DGraph(edgeFile, layoutFile, plotId, randomView, redraw) {
     Plotly.newPlot(plotId, traces, layout, config).then(() => {
         Plotly.addFrames(plotId, frames);
 
-        if(!redraw){
-            document.getElementById(plotId).on('plotly_animated', () => {
-                Plotly.redraw(plotId);
-            });
-        }
+        document.getElementById(plotId).on('plotly_animated', () => {
+            Plotly.redraw(plotId);
+        });
     });
 
 }
