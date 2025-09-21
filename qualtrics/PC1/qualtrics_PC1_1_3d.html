@@ -9,9 +9,11 @@
 <body>
   <div id="plot" style="width: 100%; height: 700px;"></div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
-    render3DGraph("/data/PC_1_09/PC_1_09_5.csv", "/layouts/PC_1_09/PC_1_09_5-3d.csv", "plot", false, [{ x: 0.64, y: 0.48, z: 1.82 }, { x: -0.62, y: 0.78, z: 0.01 }]);
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render3DGraph } from "/visualize_graph.js";
+
+    render3DGraph("/data/PC_1_09/PC_1_09_5.csv", "/layouts/PC_1_09/PC_1_09_5-3d.csv", "plot", false, [{ x: 0.64, y: 0.48, z: 1.82 }, { x: -0.62, y: 0.78, z: 0.01 }], "PC1");
   </script>
 </body>
 </html>

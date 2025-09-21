@@ -25,11 +25,13 @@
     </div>
   </div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
-    render3DGraph("/data/sierpinski3d/sierpinski3d_2.csv", "/layouts/sierpinski3d/sierpinski3d_2-3d.csv", "plotA", true);
-    render3DGraph("/data/sierpinski3d/sierpinski3d_5.csv", "/layouts/sierpinski3d/sierpinski3d_5-3d.csv", "plotB", true);
-    render3DGraph("/data/sierpinski3d/sierpinski3d.csv", "/layouts/sierpinski3d/sierpinski3d-3d.csv", "plotC", true);
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render3DGraph } from "/visualize_graph.js";
+
+    render3DGraph("/data/sierpinski3d/sierpinski3d_2.csv", "/layouts/sierpinski3d/sierpinski3d_2-3d.csv", "plotA", true, null);
+    render3DGraph("/data/sierpinski3d/sierpinski3d_5.csv", "/layouts/sierpinski3d/sierpinski3d_5-3d.csv", "plotB", true, null);
+    render3DGraph("/data/sierpinski3d/sierpinski3d.csv", "/layouts/sierpinski3d/sierpinski3d-3d.csv", "plotC", true, null);
   </script>
 </body>
 </html>

@@ -25,11 +25,13 @@
     </div>
   </div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
-    render3DGraph("/data/LFR_250/LFR_250_01_30_12_3.csv", "/layouts/LFR_250/LFR_250_01_30_12_3-3d.csv", "plotA", true);
-    render3DGraph("/data/LFR_250/LFR_250_01_30_12_2.csv", "/layouts/LFR_250/LFR_250_01_30_12_2-3d.csv", "plotB", true);
-    render3DGraph("/data/LFR_250/LFR_250_01_30_12.csv", "/layouts/LFR_250/LFR_250_01_30_12-3d.csv", "plotC", true);
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render3DGraph } from "/visualize_graph.js";
+
+    render3DGraph("/data/LFR_250/LFR_250_01_30_12_3.csv", "/layouts/LFR_250/LFR_250_01_30_12_3-3d.csv", "plotA", true, null);
+    render3DGraph("/data/LFR_250/LFR_250_01_30_12_2.csv", "/layouts/LFR_250/LFR_250_01_30_12_2-3d.csv", "plotB", true, null);
+    render3DGraph("/data/LFR_250/LFR_250_01_30_12.csv", "/layouts/LFR_250/LFR_250_01_30_12-3d.csv", "plotC", true, null);
   </script>
 </body>
 </html>

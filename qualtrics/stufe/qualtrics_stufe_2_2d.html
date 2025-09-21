@@ -25,8 +25,10 @@
     </div>
   </div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render2DGraph } from "/visualize_graph.js";
+    
     render2DGraph("/data/stufe/stufe_7.csv", "/layouts/stufe/stufe_7-2d.csv", "plotA", true);
     render2DGraph("/data/stufe/stufe_5.csv", "/layouts/stufe/stufe_5-2d.csv", "plotB", true);
     render2DGraph("/data/stufe/stufe_6.csv", "/layouts/stufe/stufe_6-2d.csv", "plotC", true);

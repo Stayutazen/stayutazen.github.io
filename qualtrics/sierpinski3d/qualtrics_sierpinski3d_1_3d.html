@@ -9,9 +9,11 @@
 <body>
   <div id="plot" style="width: 100%; height: 700px;"></div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
-    render3DGraph("/data/sierpinski3d/sierpinski3d_2.csv", "/layouts/sierpinski3d/sierpinski3d_2-3d.csv", "plot", false);
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render3DGraph } from "/visualize_graph.js";
+
+    render3DGraph("/data/sierpinski3d/sierpinski3d_2.csv", "/layouts/sierpinski3d/sierpinski3d_2-3d.csv", "plot", false, "sier");
   </script>
 </body>
 </html>

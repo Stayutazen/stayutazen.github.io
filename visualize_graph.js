@@ -1,3 +1,5 @@
+import { db, auth, signInAnonymously, addDoc, collection } from "./firebase.js";
+
 async function load2DGraphData(edgeFile, layoutFile) {
     const [edgeData, nodeData] = await Promise.all([
         d3.dsv(";", edgeFile),
@@ -64,7 +66,7 @@ function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
     return create2DTraces(edges, rotatedNodes);
 }
 
-async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
+export async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
     // compute graph center as rotation pivot
@@ -227,7 +229,7 @@ function create3DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
-async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos) {
+export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos, graph) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
@@ -290,4 +292,53 @@ async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos) {
     };
 
     Plotly.newPlot(plotId, traces, layout, config);
+
+    if(graph == null){
+        console.log("no graph")
+        return;
+    }
+
+    const myPlot = document.getElementById("plot");
+
+    myPlot.on('plotly_relayout', logInteraction);
+
+    // Logs when there hasn't been an interaction for 10 seconds
+    let interactionTimer = null;
+    console.log("Timer null");
+
+    function logInteraction() {
+    // If timer was running, reset it
+    if (interactionTimer){
+      console.log("Timer reset");
+      clearTimeout(interactionTimer);
+    }
+
+    console.log("Timer running");
+
+    // Start 10 second timer
+    interactionTimer = setTimeout(async () => {
+      const sceneCamera = myPlot._fullLayout.scene.camera;
+
+
+      signInAnonymously(auth)
+        .then(async () => {
+          console.log("Signed in!");
+        
+          try {
+            await addDoc(collection(db, graph), {
+              camera: sceneCamera,
+              timestamp: new Date()
+            });
+            console.log("Camera logged to firebase");
+          } catch (e) {
+            console.error("Failed to log camera: ", e);
+          }
+        })
+        .catch((error) => {
+          console.error("Auth error:", error);
+        });
+
+          interactionTimer = null;
+        }, 10000);
+    }
 }

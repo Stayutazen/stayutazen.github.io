@@ -9,9 +9,11 @@
 <body>
   <div id="plot" style="width: 100%; height: 700px;"></div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
-    render3DGraph("/data/stufe/stufe_5.csv", "/layouts/stufe/stufe_5-3d.csv", "plot", false, [{ x: 1.72, y: -0.96, z: -0.31 }, { x: 0.11, y: -0.10, z: 0.98 }]);
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render3DGraph } from "/visualize_graph.js";
+
+    render3DGraph("/data/stufe/stufe_5.csv", "/layouts/stufe/stufe_5-3d.csv", "plot", false, [{ x: 1.72, y: -0.96, z: -0.31 }, { x: 0.11, y: -0.10, z: 0.98 }], "stufe");
   </script>
 </body>
 </html>

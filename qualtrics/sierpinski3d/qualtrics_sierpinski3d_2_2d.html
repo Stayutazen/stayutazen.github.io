@@ -25,8 +25,10 @@
     </div>
   </div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render2DGraph } from "/visualize_graph.js";
+    
     render2DGraph("/data/sierpinski3d/sierpinski3d_2.csv", "/layouts/sierpinski3d/sierpinski3d_2-2d.csv", "plotA", true);
     render2DGraph("/data/sierpinski3d/sierpinski3d_5.csv", "/layouts/sierpinski3d/sierpinski3d_5-2d.csv", "plotB", true);
     render2DGraph("/data/sierpinski3d/sierpinski3d.csv", "/layouts/sierpinski3d/sierpinski3d-2d.csv", "plotC", true);

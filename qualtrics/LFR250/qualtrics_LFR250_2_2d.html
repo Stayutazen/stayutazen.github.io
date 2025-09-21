@@ -25,8 +25,10 @@
     </div>
   </div>
 
-  <script src="/visualize_graph.js"></script>
-  <script>
+  <script type="module" src="/visualize_graph.js"></script>
+  <script type="module">
+    import { render2DGraph } from "/visualize_graph.js";
+    
     render2DGraph("/data/LFR_250/LFR_250_01_30_12_3.csv", "/layouts/LFR_250/LFR_250_01_30_12_3-2d.csv", "plotA", true);
     render2DGraph("/data/LFR_250/LFR_250_01_30_12_2.csv", "/layouts/LFR_250/LFR_250_01_30_12_2-2d.csv", "plotB", true);
     render2DGraph("/data/LFR_250/LFR_250_01_30_12.csv", "/layouts/LFR_250/LFR_250_01_30_12-2d.csv", "plotC", true);
