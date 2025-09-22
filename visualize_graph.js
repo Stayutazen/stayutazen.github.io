@@ -157,6 +157,7 @@ export async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
     const config = {
     scrollZoom: true,
     displaylogo: false,
+    responsive: true,
     modeBarButtonsToRemove: [
         "toImage",
         "zoom2d",
