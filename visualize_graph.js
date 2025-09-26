@@ -284,6 +284,7 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
     const config = {
     scrollZoom: true,
     displaylogo: false,
+    responsive: true,
     modeBarButtonsToRemove: [
         "toImage",
         "tableRotation",
