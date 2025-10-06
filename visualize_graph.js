@@ -39,6 +39,63 @@ export function randomFrame(){
     return frames;
 }
 
+export function randomView3D() {
+  const r = 2.0;
+  let minDegrees = 20;
+  const minAngle = minDegrees * Math.PI / 180; // convert to radians
+  let attempts = 0;
+  let views = [];
+  let value = null;
+
+  function randomView() {
+    const theta = Math.random() * 2 * Math.PI;
+    const phi = Math.random() * Math.PI;
+    return {
+      x: r * Math.sin(phi) * Math.cos(theta),
+      y: r * Math.sin(phi) * Math.sin(theta),
+      z: r * Math.cos(phi)
+    };
+  }
+
+  function angleBetween(a, b) {
+    const dot = a.x * b.x + a.y * b.y + a.z * b.z;
+    const magA = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    const magB = Math.sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
+    return Math.acos(dot / (magA * magB));
+  }
+
+  while (attempts < 5) {
+    if (value === null) {
+      views = Array.from({ length: 3 }, () => randomView());
+    } else {
+      views[value] = randomView();
+    }
+
+    console.log(views);
+    console.log(value);
+
+    // Check all pairs
+    const angles = [
+      angleBetween(views[0], views[1]),
+      angleBetween(views[1], views[2]),
+      angleBetween(views[0], views[2])
+    ];
+
+    if (angles.every(a => a >= minAngle)) {
+      break;
+    }
+
+    // Replace offending one randomly
+    if (angles[0] < minAngle) value = Math.random() < 0.5 ? 0 : 1;
+    else if (angles[1] < minAngle) value = Math.random() < 0.5 ? 1 : 2;
+    else if (angles[2] < minAngle) value = Math.random() < 0.5 ? 0 : 2;
+
+    attempts++;
+  }
+
+  return views;
+}
+
 async function load2DGraphData(edgeFile, layoutFile) {
     const [edgeData, nodeData] = await Promise.all([
         d3.dsv(";", edgeFile),
@@ -269,7 +326,7 @@ function create3DTraces(edges, nodes) {
     return [edgeTrace, nodeTrace];
 }
 
-export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos, graph) {
+export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, pos, graph, eye) {
     const { edges, nodes } = await load3DGraphData(edgeFile, layoutFile);
     const traces = create3DTraces(edges, nodes);
 
@@ -296,15 +353,18 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
     }
     
     if (randomView) {
-        const r = 2.0; // distance of camera from origin
-        const theta = Math.random() * 2 * Math.PI;
-        const phi = Math.random() * Math.PI;
+        // const r = 2.0; // distance of camera from origin
+        // const theta = Math.random() * 2 * Math.PI;
+        // const phi = Math.random() * Math.PI;
+        // camera = {
+        //     eye: {
+        //         x: r * Math.sin(phi) * Math.cos(theta),
+        //         y: r * Math.sin(phi) * Math.sin(theta),
+        //         z: r * Math.cos(phi)
+        //     }
+        // };
         camera = {
-            eye: {
-                x: r * Math.sin(phi) * Math.cos(theta),
-                y: r * Math.sin(phi) * Math.sin(theta),
-                z: r * Math.cos(phi)
-            }
+            eye: eye
         };
     }
 

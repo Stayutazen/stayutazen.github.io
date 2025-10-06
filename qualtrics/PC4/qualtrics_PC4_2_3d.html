@@ -27,11 +27,13 @@
 
   <script type="module" src="/visualize_graph.js"></script>
   <script type="module">
-    import { render3DGraph } from "/visualize_graph.js";
+    import { render3DGraph, randomView3D } from "/visualize_graph.js";
 
-    render3DGraph("/data/PC_4/PC_4_09.csv", "/layouts/PC_4/PC_4_09-3d.csv", "plotA", true, null);
-    render3DGraph("/data/PC_4/PC_4_1.csv", "/layouts/PC_4/PC_4_1-3d.csv", "plotB", true, null);
-    render3DGraph("/data/PC_4/PC_4_099.csv", "/layouts/PC_4/PC_4_099-3d.csv", "plotC", true, null);
+    let views = randomView3D();
+
+    render3DGraph("/data/PC_4/PC_4_09.csv", "/layouts/PC_4/PC_4_09-3d.csv", "plotA", true, null, null, views[0]);
+    render3DGraph("/data/PC_4/PC_4_1.csv", "/layouts/PC_4/PC_4_1-3d.csv", "plotB", true, null, null, views[1]);
+    render3DGraph("/data/PC_4/PC_4_099.csv", "/layouts/PC_4/PC_4_099-3d.csv", "plotC", true, null, null, views[2]);
   </script>
 </body>
 </html>
