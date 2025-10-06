@@ -27,11 +27,13 @@
 
   <script type="module" src="/visualize_graph.js"></script>
   <script type="module">
-    import { render2DGraph } from "/visualize_graph.js";
+    import { render2DGraph, randomFrame } from "/visualize_graph.js";
+
+    frames = randomFrame();
     
-    render2DGraph("/data/PC_1_09/PC_1_09_3.csv", "/layouts/PC_1_09/PC_1_09_3-2d.csv", "plotA", true);
-    render2DGraph("/data/PC_1_09/PC_1_09_6.csv", "/layouts/PC_1_09/PC_1_09_6-2d.csv", "plotB", true);
-    render2DGraph("/data/PC_1_09/PC_1_09.csv", "/layouts/PC_1_09/PC_1_09-2d.csv", "plotC", true);
+    render2DGraph("/data/PC_1_09/PC_1_09_3.csv", "/layouts/PC_1_09/PC_1_09_3-2d.csv", "plotA", true, frames[0]);
+    render2DGraph("/data/PC_1_09/PC_1_09_6.csv", "/layouts/PC_1_09/PC_1_09_6-2d.csv", "plotB", true, frames[2]);
+    render2DGraph("/data/PC_1_09/PC_1_09.csv", "/layouts/PC_1_09/PC_1_09-2d.csv", "plotC", true, frames[1]);
   </script>
 </body>
 

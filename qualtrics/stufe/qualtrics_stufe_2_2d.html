@@ -27,11 +27,13 @@
 
   <script type="module" src="/visualize_graph.js"></script>
   <script type="module">
-    import { render2DGraph } from "/visualize_graph.js";
+    import { render2DGraph, randomFrame } from "/visualize_graph.js";
+
+    frames = randomFrame();
     
-    render2DGraph("/data/stufe/stufe_7.csv", "/layouts/stufe/stufe_7-2d.csv", "plotA", true);
-    render2DGraph("/data/stufe/stufe_5.csv", "/layouts/stufe/stufe_5-2d.csv", "plotB", true);
-    render2DGraph("/data/stufe/stufe_6.csv", "/layouts/stufe/stufe_6-2d.csv", "plotC", true);
+    render2DGraph("/data/stufe/stufe_8.csv", "/layouts/stufe/stufe_8-2d.csv", "plotA", true, frames[1]);
+    render2DGraph("/data/stufe/stufe.csv", "/layouts/stufe/stufe-2d.csv", "plotB", true, frames[2]);
+    render2DGraph("/data/stufe/stufe_9.csv", "/layouts/stufe/stufe_9-2d.csv", "plotC", true, frames[0]);
   </script>
 </body>
 

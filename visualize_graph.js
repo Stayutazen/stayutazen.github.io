@@ -1,5 +1,44 @@
 import { db, auth, signInAnonymously, addDoc, collection } from "./firebase.js";
 
+export function randomFrame(){
+    let attempt = 0;
+    let frames = [];
+    let value = null;
+
+    while (attempt < 5) {
+      if(value == null){
+        frames = Array.from({ length: 3 }, () => Math.floor(Math.random() * 36));
+      }
+      else{
+        frames[value] = Math.floor(Math.random() * 36);
+      }
+      
+      frames.sort((a, b) => a - b);
+      console.log(frames);
+      console.log(value);
+
+      const diff1 = frames[1] - frames[0];
+      const diff2 = frames[2] - frames[1];
+
+      if (diff1 >= 3 && diff2 >= 3) {
+        return frames;
+      }
+
+      if (diff1 < 3) {
+        // Replace either frames[0] or frames[1], randomly
+        value = Math.random() < 0.5 ? 0 : 1;
+      }
+
+      if (diff2 < 3) {
+        // Replace either frames[1] or frames[2], randomly
+        value = Math.random() < 0.5 ? 1 : 2;
+      }
+      attempt++;
+    }
+
+    return frames;
+}
+
 async function load2DGraphData(edgeFile, layoutFile) {
     const [edgeData, nodeData] = await Promise.all([
         d3.dsv(";", edgeFile),
@@ -66,7 +105,7 @@ function createRotatedTraces(edges, nodes, theta, cx = 0, cy = 0) {
     return create2DTraces(edges, rotatedNodes);
 }
 
-export async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
+export async function render2DGraph(edgeFile, layoutFile, plotId, randomView, start) {
     const { edges, nodes } = await load2DGraphData(edgeFile, layoutFile);
 
     // compute graph center as rotation pivot
@@ -84,7 +123,7 @@ export async function render2DGraph(edgeFile, layoutFile, plotId, randomView) {
 
     // if randomview, take a random start index and change the initial trace accordingly
     if(randomView){
-        startIndex = Math.floor(Math.random() * nFrames);
+        startIndex = start; //Math.floor(Math.random() * nFrames);
         traces = createRotatedTraces(edges, nodes, thetas[startIndex], cx, cy);
     }
     
