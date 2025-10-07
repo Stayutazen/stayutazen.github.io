@@ -320,7 +320,7 @@ function create3DTraces(edges, nodes) {
         type: 'scatter3d',
         marker: { size: 3, color: '#1f77b4' },
         text: nodes.map((_, i) => String(i)),
-        hoverinfo: 'text'
+        hoverinfo: 'none'
     };
 
     return [edgeTrace, nodeTrace];
