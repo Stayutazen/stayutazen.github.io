@@ -416,7 +416,7 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
 
     console.log("Timer running");
 
-    // Start 2 second timer
+    // Start 7 second timer
     interactionTimer = setTimeout(async () => {
       const sceneCamera = myPlot._fullLayout.scene.camera;
 
@@ -440,6 +440,6 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
         });
 
           interactionTimer = null;
-        }, 2000);
+        }, 7000);
     }
 }
