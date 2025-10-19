@@ -401,25 +401,74 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
 
     const myPlot = document.getElementById("plot");
 
-    myPlot.on('plotly_relayout', logInteraction);
+    myPlot.on('plotly_relayout', (eventData) => logInteraction(eventData));
 
-    // Logs when there hasn't been an interaction for 10 seconds
-    let interactionTimer = null;
-    console.log("Timer null");
+    // // Logs when there hasn't been an interaction for 10 seconds
+    // let interactionTimer = null;
+    // console.log("Timer null");
 
-    function logInteraction() {
-    // If timer was running, reset it
-    if (interactionTimer){
-      console.log("Timer reset");
-      clearTimeout(interactionTimer);
-    }
+    // function logInteraction() {
+    // // If timer was running, reset it
+    // if (interactionTimer){
+    //   console.log("Timer reset");
+    //   clearTimeout(interactionTimer);
+    // }
 
-    console.log("Timer running");
+    // console.log("Timer running");
 
-    // Start 7 second timer
-    interactionTimer = setTimeout(async () => {
-      const sceneCamera = myPlot._fullLayout.scene.camera;
+    // // Start 7 second timer
+    // interactionTimer = setTimeout(async () => {
+    //   const sceneCamera = myPlot._fullLayout.scene.camera;
 
+
+    //   signInAnonymously(auth)
+    //     .then(async () => {
+    //       console.log("Signed in!");
+        
+    //       try {
+    //         await addDoc(collection(db, graph), {
+    //           camera: sceneCamera,
+    //           timestamp: new Date()
+    //         });
+    //         console.log("Camera logged to firebase");
+    //       } catch (e) {
+    //         console.error("Failed to log camera: ", e);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error("Auth error:", error);
+    //     });
+
+    //       interactionTimer = null;
+    //     }, 7000);
+    // }
+
+    // For logging every interaction
+    let lastCamera = null;
+    let startTime = null;
+
+    function logInteraction(eventData) {
+      console.log("yes");
+      const cameraKey = Object.keys(eventData).find(k => k.includes('scene.camera'));
+      if (!cameraKey){
+        console.log("no cam");
+        return; // ignore non-camera relayouts
+      } 
+
+      const currentCamera = eventData[cameraKey];
+      if (currentCamera == lastCamera) return;  // don't log the same camera as last time
+
+      if (startTime === null) {
+        startTime = Date.now();
+        lastCamera = currentCamera;
+        console.log('Stopwatch started');
+        return;
+      }
+
+      const elapsed = (Date.now() - startTime) / 1000; // elapsed time in seconds
+
+      console.log('Previous camera:', lastCamera);
+      console.log('Elapsed time (s):', elapsed);
 
       signInAnonymously(auth)
         .then(async () => {
@@ -427,7 +476,8 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
         
           try {
             await addDoc(collection(db, graph), {
-              camera: sceneCamera,
+              camera: lastCamera,
+              time: elapsed,
               timestamp: new Date()
             });
             console.log("Camera logged to firebase");
@@ -438,8 +488,5 @@ export async function render3DGraph(edgeFile, layoutFile, plotId, randomView, po
         .catch((error) => {
           console.error("Auth error:", error);
         });
-
-          interactionTimer = null;
-        }, 7000);
     }
 }
